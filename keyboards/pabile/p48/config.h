@@ -3,12 +3,12 @@
 //#include "config_common.h"
 
 /* key matrix size */
-#define MATRIX_ROWS 7
-#define MATRIX_COLS 7
+#define MATRIX_ROWS 4
+#define MATRIX_COLS 12
 
 /* pin-out */
-#define MATRIX_ROW_PINS { GP26, GP22, GP21, GP20, GP19, GP18, GP17 }
-#define MATRIX_COL_PINS { GP16, GP1,  GP4,  GP5,  GP6,  GP7,  GP8 }
+//#define MATRIX_ROW_PINS { GP26, GP22, GP21, GP20, GP19, GP18, GP17 }
+//#define MATRIX_COL_PINS { GP16, GP1,  GP4,  GP5,  GP6,  GP7,  GP8 }
 
 /* COL2ROW or ROW2COL */
 #define DIODE_DIRECTION COL2ROW
