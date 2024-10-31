@@ -17,3 +17,19 @@
     {k50,k51,k52,k53,k54,k55,k56}, \
     {k60,k61,k62,k63,k64,k65    } \
 }
+
+// Defines names for use in layer keycodes and the keymap
+enum layer_names
+{
+    BASE = 0,
+    NUMB,
+    FUNC,
+    NPAD,
+    MOUS,
+    CTRL,
+    NCTL,
+    MEDI,
+    SYSC,
+    LAYR
+};
+

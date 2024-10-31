@@ -1,20 +1,5 @@
 #include QMK_KEYBOARD_H
 
-// Defines names for use in layer keycodes and the keymap
-enum layer_names
-{
-    BASE = 0,
-    NUMB,
-    FUNC,
-    NPAD,
-    MOUS,
-    CTRL,
-    NCTL,
-    MEDI,
-    SYSC,
-    LAYR
-};
-
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [BASE] = LAYOUT(
 /*   _____________________________________________________________________________________________________________________________________________________________
@@ -90,8 +75,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
        LCTL(KC_HOME),LCTL(KC_A), LCTL(KC_S),  LCTL(KC_D),  LCTL(KC_F),  LCTL(KC_G),  LCTL(KC_H),  LCTL(KC_J),  LCTL(KC_K),  LCTL(KC_L),  KC_TRNS,     LCTL(KC_PGDN),
 //  | |-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----NO-----|
        LCTL(KC_END),LCTL(KC_Z),  LCTL(KC_X),  LCTL(KC_C),  LCTL(KC_V),  LCTL(KC_B),  LCTL(KC_N),  LCTL(KC_M),  KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_NO,
-//  | |-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----NO-----|-----▽------|
-       KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_NO,       KC_TRNS
+//  | |-----▽------|-----▽------|-----▽------|-----▽------|---ENTER----|---ENTER----|-----▽------|-----▽------|-----▽------|-----▽------|-----NO-----|-----▽------|
+       KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_ENT,      KC_ENT,      KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_NO,       KC_TRNS
 //   \|____________|____________|____________|____________|____________|____________|____________|____________|____________|____________|____________|____________|
     ),
   [NCTL] = LAYOUT(
@@ -103,8 +88,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
        KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,
 //  | |-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----NO-----|
        KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_NO,
-//  | |-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----NO-----|-----▽------|
-       KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_NO,       KC_TRNS
+//  | |-----▽------|-----▽------|-----▽------|-----▽------|---ENTER----|---ENTER----|-----▽------|-----▽------|-----▽------|-----▽------|-----NO-----|-----▽------|
+       KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_ENT,      KC_ENT,      KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_NO,       KC_TRNS
 //   \|____________|____________|____________|____________|____________|____________|____________|____________|____________|____________|____________|____________|
     ),
   [MEDI] = LAYOUT(
