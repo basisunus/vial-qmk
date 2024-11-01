@@ -80,8 +80,21 @@ bool PROGMEM ksp[GRID_COUNT] =
     false, false, false, false, false, false, false, false, false, false, false, false
 };
 
+//key layout
+const uint8_t PROGMEM ki[GRID_COUNT] =
+{
+//--1---2---3---4---5---6---7
+    0,  1,  2,  3,  4,  5,  6,
+   23, 22, 21, 20, 19, 18, 17,
+   24, 25, 26, 27, 28, 29, 30,
+   47, 46, 45, 44, 43, 42, 41,
+    7,  8,  9, 10, 11, 13, 12,
+   16, 15, 14, 31, 32, 33, 34,
+   40, 39, 38, 37, 36, 35    
+};
+
 //led index mapping
-const uint8_t PROGMEM li[GRID_COUNT*3] =
+const uint8_t PROGMEM li[GRID_COUNT] =
 {
 //--1---2---3---4---5---6---7---8---9---10--11--12
      0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11,
@@ -320,9 +333,9 @@ void matrix_scan_user(void) {
         for (uint8_t col = 0; col < MATRIX_COLS; col++) {
             uint16_t i = row * MATRIX_COLS + col;
             if (matrix_is_on(row, col)) {
-                ksp[li[i]] = true;
+                ksp[ki[i]] = true;
             } else {
-                ksp[li[i]] = false;
+                ksp[ki[i]] = false;
             }
         }
     }
