@@ -16,6 +16,8 @@
 
 #pragma once
 
+#define DYNAMIC_KEYMAP_LAYER_COUNT 8
+
 #define TAPPING_TERM 250
 
 #define RGB_DISABLE_TIMEOUT 900000 // 15 min
