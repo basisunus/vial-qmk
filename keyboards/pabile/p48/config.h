@@ -28,6 +28,7 @@
 #define WS2812_DI_PIN GP0
 #define DRIVER_LED_TOTAL 48
 #define RGBLED_NUM 48
+#define GRID_COUNT 48
 
 #ifdef RGB_MATRIX_ENABLE
 
