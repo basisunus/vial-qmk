@@ -23,6 +23,12 @@ uint16_t my_speed = 0;
 bool sft_down = false;
 bool caps_lck = false;
 bool nums_lck = false;
+bool scrl_lck = false;
+bool nk_rover = false;
+uint16_t idx_caps = 8;
+uint16_t idx_nums = 6;
+uint16_t idx_scrl = 59;
+uint16_t idx_nkro = 45;
 
 #define C_LYR	0xF7, 0x50, 0x50
 #define C_CMD	HSV_CORAL
@@ -55,12 +61,23 @@ bool rgb_matrix_indicators_kb(void) {
 
     caps_lck = host_keyboard_led_state().caps_lock;
     nums_lck = host_keyboard_led_state().num_lock;
+    scrl_lck = host_keyboard_led_state().scroll_lock;
 
     return true;
 }
 
+//key state press
+bool PROGMEM ksp[GRID_COUNT] =
+{
+    false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+    false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+    false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+    false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+    false, false, false, false, false, false, false, false, false, false, false, false, false, false, false
+};
+
 //led index mapping
-const uint8_t PROGMEM li[75*3] =
+const uint8_t PROGMEM li[GRID_COUNT*3] =
 {
     74, 73, 72, 71, 70, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60,
     59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 49, 48, 47, 46, 45,
@@ -69,72 +86,82 @@ const uint8_t PROGMEM li[75*3] =
     14, 13, 12, 11, 10,  9,  8,  7,  6,  5,  4,  3,  2,  1,  0
 };
 
-const uint8_t PROGMEM layercolors[7][75*3] =
+const uint8_t PROGMEM layercolors[7][GRID_COUNT*3] =
 {
     //BASE
-	{ C_CMD, C_NUM, C_NUM, C_NUM, C_NUM, C_NUM, C_NUM, C_NUM, C_NUM, C_NUM, C_NUM, C_SYM, C_SYM, C_SYM, C_SYM,
-	  C_SYM, C_ABC, C_ABC, C_ABC, C_ABC, C_ABC, C_SYM, C_SYM, C_SYM, C_ABC, C_ABC, C_ABC, C_ABC, C_ABC, C_CMD,
-	  C_ACS, C_ABC, C_ABC, C_ABC, C_ABC, C_ABC, C_VIU, C_CMD, C_VIU, C_ABC, C_ABC, C_ABC, C_ABC, C_SYM, C_SYM,
-	  C_ACS, C_ABC, C_ABC, C_ABC, C_ABC, C_ABC, C_VIU, C_UPP, C_VIU, C_ABC, C_ABC, C_SYM, C_SYM, C_SYM, C_ACS,
-	  C_LYR, C_CMD, C_LYR, C_LYR, C_SYM, C_SYM, C_LFT, C_DWN, C_RGT, C_ENT, C_ACS, C_ACS, C_LYR, C_LYR, C_LYR },
+    //--1------2------3------4------5------6------7------8------9-----10-----11-----12-----13-----14-----15
+	{ C_CMD, C_NUM, C_NUM, C_NUM, C_NUM, C_NUM, C_NUM, C_NUM, C_NUM, C_NUM, C_NUM, C_SYM, C_SYM, C_SYM, C_SYM,  //1
+	  C_SYM, C_ABC, C_ABC, C_ABC, C_ABC, C_ABC, C_SYM, C_SYM, C_SYM, C_ABC, C_ABC, C_ABC, C_ABC, C_ABC, C_CMD,  //2
+	  C_ACS, C_ABC, C_ABC, C_ABC, C_ABC, C_ABC, C_VIU, C_CMD, C_VIU, C_ABC, C_ABC, C_ABC, C_ABC, C_SYM, C_SYM,  //3
+	  C_ACS, C_ABC, C_ABC, C_ABC, C_ABC, C_ABC, C_VIU, C_UPP, C_VIU, C_ABC, C_ABC, C_SYM, C_SYM, C_SYM, C_ACS,  //4
+	  C_LYR, C_CMD, C_LYR, C_LYR, C_SYM, C_SYM, C_LFT, C_DWN, C_RGT, C_ENT, C_ACS, C_ACS, C_LYR, C_LYR, C_LYR },//5
     //NUMPAD
-	{ C_CMD, C_FUN, C_FUN, C_FUN, C_FUN, C_FUN, C_FUN, C_FUN, C_FUN, C_FUN, C_FUN, C_FUN, C_FUN, C_BLK, C_CMD,
-	  C_LCK, C_BLK, C_UPP, C_BLK, C_BLK, C_BLK, C_VIU, C_CMD, C_VIU, C_VIU, C_UPP, C_VIU, C_SYM, C_CMD, C_BLK,
-	  C_BLK, C_LFT, C_DWN, C_RGT, C_BLK, C_BLK, C_VIU, C_CMD, C_VIU, C_LFT, C_BLK, C_RGT, C_SYM, C_BLK, C_BLK,
-	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_VIU, C_DWN, C_VIU, C_SYM, C_BLK, C_BLK,
-	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_LCK, C_BLK, C_LCK, C_CMD, C_CMD, C_ENT, C_SYM, C_BLK, C_BLK },
+    //--1------2------3------4------5------6------7------8------9-----10-----11-----12-----13-----14-----15
+	{ C_CMD, C_FUN, C_FUN, C_FUN, C_FUN, C_FUN, C_FUN, C_FUN, C_FUN, C_FUN, C_FUN, C_FUN, C_FUN, C_BLK, C_CMD,  //1
+	  C_LCK, C_BLK, C_UPP, C_BLK, C_BLK, C_BLK, C_VIU, C_CMD, C_VIU, C_VIU, C_UPP, C_VIU, C_SYM, C_BLK, C_BLK,  //2
+	  C_BLK, C_LFT, C_DWN, C_RGT, C_BLK, C_BLK, C_VIU, C_CMD, C_VIU, C_LFT, C_BLK, C_RGT, C_SYM, C_BLK, C_BLK,  //3
+	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_VIU, C_DWN, C_VIU, C_SYM, C_BLK, C_BLK,  //4
+	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_LCK, C_BLK, C_LCK, C_CMD, C_CMD, C_ENT, C_SYM, C_BLK, C_BLK },//5
     //MOUSE
-	{ C_BLK, C_BLK, C_BLK, C_BLK, C_ENT, C_ENT, C_BLK, C_BLK, C_BLK, C_ENT, C_ENT, C_BLK, C_BLK, C_BLK, C_BLK,
-	  C_BLK, C_BLK, C_BLK, C_BLK, C_RB1, C_RB5, C_RB2, C_BLK, C_RB1, C_RB7, C_RB4, C_RB2, C_RB6, C_RB3, C_BLK,
-	  C_BLK, C_BLK, C_RB5, C_RB2, C_RB7, C_RB3, C_RB6, C_BLK, C_RB4, C_RB2, C_RB1, C_RB5, C_RB4, C_RB7, C_BLK,
-	  C_BLK, C_RB1, C_RB3, C_RB4, C_RB5, C_RB1, C_BLK, C_BLK, C_BLK, C_RB5, C_RB3, C_RB7, C_RB2, C_RB1, C_RB6,
-	  C_BLK, C_RB7, C_RB2, C_RB6, C_RB3, C_RB4, C_BLK, C_BLK, C_BLK, C_RB1, C_RB6, C_RB1, C_RB3, C_RB5, C_BLK },
+    //--1------2------3------4------5------6------7------8------9-----10-----11-----12-----13-----14-----15
+	{ C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,  //1
+	  C_SYM, C_LFT, C_UPP, C_RGT, C_BLK, C_BLK, C_RB1, C_BLK, C_UPP, C_LFT, C_UPP, C_RGT, C_SYM, C_BLK, C_BLK,  //2
+	  C_ENT, C_LFT, C_DWN, C_RGT, C_BLK, C_BLK, C_RB2, C_BLK, C_DWN, C_LFT, C_CMD, C_RGT, C_ENT, C_BLK, C_BLK,  //3
+	  C_CMD, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_RB3, C_UPP, C_CMD, C_BLK, C_DWN, C_BLK, C_CMD, C_BLK, C_BLK,  //4
+	  C_BLK, C_BLK, C_BLK, C_BLK, C_LFT, C_RGT, C_LFT, C_DWN, C_RGT, C_LFT, C_RGT, C_BLK, C_BLK, C_BLK, C_BLK },//5
     //CONTROL
-	{ C_BLK, C_BLK, C_BLK, C_BLK, C_ENT, C_ENT, C_BLK, C_BLK, C_BLK, C_ENT, C_ENT, C_BLK, C_BLK, C_BLK, C_BLK,
-	  C_BLK, C_BLK, C_BLK, C_BLK, C_RB1, C_RB5, C_RB2, C_BLK, C_RB1, C_RB7, C_RB4, C_RB2, C_RB6, C_RB3, C_BLK,
-	  C_BLK, C_BLK, C_RB5, C_RB2, C_RB7, C_RB3, C_RB6, C_BLK, C_RB4, C_RB2, C_RB1, C_RB5, C_RB4, C_RB7, C_BLK,
-	  C_BLK, C_RB1, C_RB3, C_RB4, C_RB5, C_RB1, C_BLK, C_BLK, C_BLK, C_RB5, C_RB3, C_RB7, C_RB2, C_RB1, C_RB6,
-	  C_BLK, C_RB7, C_RB2, C_RB6, C_RB3, C_RB4, C_BLK, C_BLK, C_BLK, C_RB1, C_RB6, C_RB1, C_RB3, C_RB5, C_BLK },
+    //--1------2------3------4------5------6------7------8------9-----10-----11-----12-----13-----14-----15
+	{ C_BLK, C_RB7, C_RB2, C_RB6, C_RB3, C_RB4, C_RB1, C_RB6, C_RB1, C_RB3, C_RB5, C_BLK, C_BLK, C_BLK, C_BLK,  //1
+	  C_RB6, C_RB7, C_RB2, C_RB1, C_RB1, C_RB5, C_BLK, C_BLK, C_BLK, C_RB7, C_RB4, C_RB2, C_RB6, C_RB3, C_BLK,  //2
+	  C_BLK, C_RB4, C_RB5, C_RB2, C_RB7, C_RB3, C_RB6, C_BLK, C_RB4, C_RB2, C_RB1, C_RB5, C_RB4, C_BLK, C_BLK,  //3
+	  C_BLK, C_RB1, C_RB3, C_RB4, C_RB5, C_RB1, C_RB2, C_BLK, C_RB1, C_RB5, C_RB3, C_BLK, C_BLK, C_BLK, C_BLK,  //4
+	  C_BLK, C_BLK, C_BLK, C_BLK, C_ENT, C_ENT, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK },//5
     //MEDIA
-	{ C_BLK, C_BLK, C_BLK, C_BLK, C_ENT, C_ENT, C_BLK, C_BLK, C_BLK, C_ENT, C_ENT, C_BLK, C_BLK, C_BLK, C_BLK,
-	  C_BLK, C_BLK, C_BLK, C_BLK, C_RB1, C_RB5, C_RB2, C_BLK, C_RB1, C_RB7, C_RB4, C_RB2, C_RB6, C_RB3, C_BLK,
-	  C_BLK, C_BLK, C_RB5, C_RB2, C_RB7, C_RB3, C_RB6, C_BLK, C_RB4, C_RB2, C_RB1, C_RB5, C_RB4, C_RB7, C_BLK,
-	  C_BLK, C_RB1, C_RB3, C_RB4, C_RB5, C_RB1, C_BLK, C_BLK, C_BLK, C_RB5, C_RB3, C_RB7, C_RB2, C_RB1, C_RB6,
-	  C_BLK, C_RB7, C_RB2, C_RB6, C_RB3, C_RB4, C_BLK, C_BLK, C_BLK, C_RB1, C_RB6, C_RB1, C_RB3, C_RB5, C_BLK },
+    //--1------2------3------4------5------6------7------8------9-----10-----11-----12-----13-----14-----15
+	{ C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_LFT, C_RGT, C_LFT, C_RGT, C_LCK, C_ENT,  //1
+	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_RB6, C_RB5, C_RB4, C_RB3, C_RB2, C_RB1,  //2
+	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_RB6, C_RB5, C_RB4, C_RB3, C_RB2, C_RB1,  //3
+	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,  //4
+	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK },//5
     //SYSTEM
-	{ C_BLK, C_BLK, C_BLK, C_BLK, C_ENT, C_ENT, C_BLK, C_BLK, C_BLK, C_ENT, C_ENT, C_BLK, C_BLK, C_BLK, C_BLK,
-	  C_BLK, C_BLK, C_BLK, C_BLK, C_RB1, C_RB5, C_RB2, C_BLK, C_RB1, C_RB7, C_RB4, C_RB2, C_RB6, C_RB3, C_BLK,
-	  C_BLK, C_BLK, C_RB5, C_RB2, C_RB7, C_RB3, C_RB6, C_BLK, C_RB4, C_RB2, C_RB1, C_RB5, C_RB4, C_RB7, C_BLK,
-	  C_BLK, C_RB1, C_RB3, C_RB4, C_RB5, C_RB1, C_BLK, C_BLK, C_BLK, C_RB5, C_RB3, C_RB7, C_RB2, C_RB1, C_RB6,
-	  C_BLK, C_RB7, C_RB2, C_RB6, C_RB3, C_RB4, C_BLK, C_BLK, C_BLK, C_RB1, C_RB6, C_RB1, C_RB3, C_RB5, C_BLK },
+    //--1------2------3------4------5------6------7------8------9-----10-----11-----12-----13-----14-----15
+	{ C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_CMD, C_CMD, C_RB1, C_CMD, C_RB1,  //1
+	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_RB4,  //2
+	  C_BLK, C_RB5, C_RB5, C_RB5, C_RB5, C_RB5, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,  //3
+	  C_LCK, C_RB4, C_RB4, C_RB4, C_RB4, C_RB4, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,  //4
+	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK },//5
     //LAYERS
-	{ C_RB4, C_RB5, C_RB6, C_RB7, C_RB1, C_RB2, C_RB3, C_RB4, C_RB5, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,
-	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,
-	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,
-	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,
-	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK }
+    //--1------2------3------4------5------6------7------8------9-----10-----11-----12-----13-----14-----15
+	{ C_RB1, C_RB2, C_RB3, C_RB4, C_RB5, C_RB6, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,  //1
+	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,  //2
+	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,  //3
+	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,  //4
+	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK } //5
 };
 
-const uint8_t PROGMEM lc_base_shft[75*3] = 
-	{ C_RB4, C_RB5, C_RB6, C_RB7, C_RB1, C_RB2, C_RB3, C_RB4, C_RB5, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,
-	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,
-	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,
-	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,
-	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK };
+const uint8_t PROGMEM lc_base_shft[GRID_COUNT*3] = 
+    //--1------2------3------4------5------6------7------8------9-----10-----11-----12-----13-----14-----15
+	{ C_CMD, C_SYM, C_SYM, C_SYM, C_SYM, C_SYM, C_SYM, C_SYM, C_SYM, C_SYM, C_SYM, C_LCK, C_LCK, C_LCK, C_SYM,  //1
+	  C_SYM, C_LCK, C_LCK, C_LCK, C_LCK, C_LCK, C_LCK, C_LCK, C_LCK, C_LCK, C_LCK, C_LCK, C_LCK, C_LCK, C_CMD,  //2
+	  C_ACS, C_LCK, C_LCK, C_LCK, C_LCK, C_LCK, C_VIU, C_CMD, C_VIU, C_LCK, C_LCK, C_LCK, C_LCK, C_LCK, C_LCK,  //3
+	  C_ACS, C_LCK, C_LCK, C_LCK, C_LCK, C_LCK, C_VIU, C_UPP, C_VIU, C_LCK, C_LCK, C_LCK, C_LCK, C_LCK, C_ACS,  //4
+	  C_LYR, C_CMD, C_LYR, C_LYR, C_SYM, C_SYM, C_LFT, C_DWN, C_RGT, C_ENT, C_ACS, C_ACS, C_LYR, C_LYR, C_LYR };//5
 
-const uint8_t PROGMEM lc_base_caps[75*3] = 
-	{ C_RB4, C_RB5, C_RB6, C_RB7, C_RB1, C_RB2, C_RB3, C_RB4, C_RB5, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,
-	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,
-	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,
-	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,
-	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK };
+const uint8_t PROGMEM lc_base_caps[GRID_COUNT*3] = 
+    //--1------2------3------4------5------6------7------8------9-----10-----11-----12-----13-----14-----15
+	{ C_CMD, C_NUM, C_NUM, C_NUM, C_NUM, C_NUM, C_NUM, C_NUM, C_NUM, C_NUM, C_NUM, C_SYM, C_SYM, C_SYM, C_SYM,  //1
+	  C_SYM, C_LCK, C_LCK, C_LCK, C_LCK, C_LCK, C_SYM, C_SYM, C_SYM, C_LCK, C_LCK, C_LCK, C_LCK, C_LCK, C_CMD,  //2
+	  C_ACS, C_LCK, C_LCK, C_LCK, C_LCK, C_LCK, C_VIU, C_CMD, C_VIU, C_LCK, C_LCK, C_LCK, C_LCK, C_SYM, C_SYM,  //3
+	  C_ACS, C_LCK, C_LCK, C_LCK, C_LCK, C_LCK, C_VIU, C_UPP, C_VIU, C_LCK, C_LCK, C_SYM, C_SYM, C_SYM, C_ACS,  //4
+	  C_LYR, C_CMD, C_LYR, C_LYR, C_SYM, C_SYM, C_LFT, C_DWN, C_RGT, C_ENT, C_ACS, C_ACS, C_LYR, C_LYR, C_LYR };//5
 
-const uint8_t PROGMEM lc_npad_lock[75*3] = 
-	{ C_RB4, C_RB5, C_RB6, C_RB7, C_RB1, C_RB2, C_RB3, C_RB4, C_RB5, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,
-	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,
-	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,
-	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,
-	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK };
+const uint8_t PROGMEM lc_npad_lock[GRID_COUNT*3] = 
+    //--1------2------3------4------5------6------7------8------9-----10-----11-----12-----13-----14-----15
+	{ C_CMD, C_FUN, C_FUN, C_FUN, C_FUN, C_FUN, C_FUN, C_FUN, C_FUN, C_FUN, C_FUN, C_FUN, C_FUN, C_BLK, C_CMD,  //1
+	  C_LCK, C_BLK, C_UPP, C_BLK, C_BLK, C_BLK, C_VIU, C_CMD, C_VIU, C_NUM, C_NUM, C_NUM, C_SYM, C_CMD, C_BLK,  //2
+	  C_BLK, C_LFT, C_DWN, C_RGT, C_BLK, C_BLK, C_VIU, C_CMD, C_VIU, C_NUM, C_NUM, C_NUM, C_SYM, C_BLK, C_BLK,  //3
+	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_NUM, C_NUM, C_NUM, C_SYM, C_BLK, C_BLK,  //4
+	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_LCK, C_BLK, C_LCK, C_NUM, C_NUM, C_ENT, C_SYM, C_BLK, C_BLK };//5
 
 void set_layer_color( uint8_t layer ) {
   uint8_t val = rgb_matrix_config.hsv.v;
@@ -150,7 +177,7 @@ void set_layer_color( uint8_t layer ) {
       ((layer == BASE) && (sft_down || caps_lck)) ||
       (layer == NPAD && nums_lck);
 
-  for (int i = 0; i < 75; i++)
+  for (int i = 0; i < GRID_COUNT; i++)
   {
   	HSV color_hsv = { C_BLK };
 
@@ -187,6 +214,41 @@ void set_layer_color( uint8_t layer ) {
   		color_hsv.s = layercolors[layer][li[i]*3+1];
   		color_hsv.v = layercolors[layer][li[i]*3+2];
   	}
+
+    if (layer == NPAD &&
+        (i == idx_caps ||
+         i == idx_nums ||
+         i == idx_scrl))
+    {
+        //lock status
+        uint16_t temp = layercolors[layer][li[i]*3];
+        temp = (temp + 0x7F) % 256;
+        if (caps_lck && i == idx_caps)
+            color_hsv.h = temp;
+        if (nums_lck && i == idx_nums)
+            color_hsv.h = temp;
+        if (scrl_lck && i == idx_scrl)
+            color_hsv.h = temp;
+    }
+
+    if (layer == SYSC &&
+        i == idx_nkro)
+    {
+        if (nk_rover)
+        {
+            uint16_t temp = layercolors[layer][li[i]*3];
+            temp = (temp + 0x7F) % 256;
+            color_hsv.h = temp;
+        }
+    }
+
+    if (ksp[i])
+    {
+        //flash randomly for the pressed key
+        color_hsv.h = rand() % 256;
+        color_hsv.s = 0xFF;
+        color_hsv.v = 0xFF;
+    }
   	
   	uint16_t hue2 = hue + color_hsv.h;
   	hue2 = hue2 > 255 ? hue2 - 256 : hue2;
@@ -214,18 +276,26 @@ bool rgb_matrix_indicators_user(void) {
   return true;
 }
 
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  switch (keycode) {
-  	case KC_RSFT:
-  	case LSFT_T(KC_SPC):
-  	case OSM(MOD_RSFT):
-  	case MOD_RSFT:
-  		if (record->event.pressed)
-  			sft_down = true;
-  		else
-  			sft_down = false;
-  		break;
-  }
-  return true;
+void matrix_scan_user(void) {
+    //get nk rollover status
+    nk_rover = keymap_config.nkro;
+
+    //get shift status
+    if (get_mods() & MOD_MASK_SHIFT)
+        sft_down = true;
+    else
+        sft_down = false;
+
+    //get key press
+    for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
+        for (uint8_t col = 0; col < MATRIX_COLS; col++) {
+            uint16_t i = row * MATRIX_COLS + col;
+            if (matrix_is_on(row, col)) {
+                ksp[li[i]] = true;
+            } else {
+                ksp[li[i]] = false;
+            }
+        }
+    }
 }
 //#endif
