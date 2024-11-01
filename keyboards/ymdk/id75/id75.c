@@ -77,7 +77,7 @@ bool PROGMEM ksp[GRID_COUNT] =
 };
 
 //led index mapping
-const uint8_t PROGMEM li[GRID_COUNT*3] =
+const uint8_t PROGMEM li[GRID_COUNT] =
 {
 //--1---2---3---4---5---6---7---8---9---10--11--12--13--14--15
     74, 73, 72, 71, 70, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60,
