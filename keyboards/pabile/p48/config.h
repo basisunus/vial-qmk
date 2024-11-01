@@ -20,7 +20,8 @@
 #define RP2040_BOOTLOADER_DOUBLE_TAP_RESET_LED GP23
 
 /* Encoders */
-//#define ENCODERS 1
+#define NO_ENCODER
+//#define ENCODERS 0
 //#define ENCODERS_PAD_A { GP27 }
 //#define ENCODERS_PAD_B { GP28 }
 
