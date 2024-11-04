@@ -332,6 +332,7 @@ void matrix_scan_user(void) {
     for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
         for (uint8_t col = 0; col < MATRIX_COLS; col++) {
             uint16_t i = row * MATRIX_COLS + col;
+            if (i == GRID_COUNT) break;
             if (matrix_is_on(row, col)) {
                 ksp[ki[i]] = true;
             } else {
