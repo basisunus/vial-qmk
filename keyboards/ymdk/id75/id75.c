@@ -87,7 +87,7 @@ const uint8_t PROGMEM li[GRID_COUNT] =
     14, 13, 12, 11, 10,  9,  8,  7,  6,  5,  4,  3,  2,  1,  0
 };
 
-const uint8_t PROGMEM layercolors[7][GRID_COUNT*3] =
+const uint8_t PROGMEM layercolors[LAYER_NUM][GRID_COUNT*3] =
 {
     //BASE
     //--1------2------3------4------5------6------7------8------9-----10-----11-----12-----13-----14-----15
@@ -124,6 +124,13 @@ const uint8_t PROGMEM layercolors[7][GRID_COUNT*3] =
 	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_RB6, C_RB5, C_RB4, C_RB3, C_RB2, C_RB1,  //3
 	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,  //4
 	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK },//5
+    //MACROS
+    //--1------2------3------4------5------6------7------8------9-----10-----11-----12-----13-----14-----15
+	{ C_BLK, C_RB1, C_RB2, C_RB3, C_RB4, C_RB5, C_BLK, C_BLK, C_BLK, C_RB1, C_RB2, C_RB3, C_RB4, C_RB5, C_BLK,  //1
+	  C_BLK, C_RB6, C_RB1, C_RB2, C_RB3, C_RB4, C_BLK, C_BLK, C_BLK, C_RB6, C_RB1, C_RB2, C_RB3, C_RB4, C_BLK,  //2
+	  C_BLK, C_RB5, C_RB6, C_RB1, C_RB2, C_RB3, C_BLK, C_BLK, C_BLK, C_RB5, C_RB6, C_RB1, C_RB2, C_RB3, C_BLK,  //3
+	  C_BLK, C_RB4, C_RB5, C_RB6, C_RB1, C_RB2, C_BLK, C_BLK, C_BLK, C_RB4, C_RB5, C_RB6, C_RB1, C_RB2, C_BLK,  //4
+	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK },//5
     //SYSTEM
     //--1------2------3------4------5------6------7------8------9-----10-----11-----12-----13-----14-----15
 	{ C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_CMD, C_CMD, C_RB1, C_CMD, C_RB1,  //1
@@ -133,7 +140,7 @@ const uint8_t PROGMEM layercolors[7][GRID_COUNT*3] =
 	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK },//5
     //LAYERS
     //--1------2------3------4------5------6------7------8------9-----10-----11-----12-----13-----14-----15
-	{ C_RB1, C_RB2, C_RB3, C_RB4, C_RB5, C_RB6, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,  //1
+	{ C_RB1, C_RB2, C_RB3, C_RB4, C_RB5, C_RB6, C_RB7, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,  //1
 	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,  //2
 	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,  //3
 	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,  //4

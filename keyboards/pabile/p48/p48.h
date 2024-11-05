@@ -18,6 +18,7 @@
     {k60,k61,k62,k63,k64,k65    } \
 }
 
+#define LAYER_NUM 11
 // Defines names for use in layer keycodes and the keymap
 enum layer_names
 {
@@ -29,6 +30,7 @@ enum layer_names
     CTRL,
     NCTL,
     MEDI,
+    MCRO,
     SYSC,
     LAYR
 };
