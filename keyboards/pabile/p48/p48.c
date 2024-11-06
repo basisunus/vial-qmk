@@ -363,13 +363,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             case M_M4:
                 SEND_STRING(SS_LALT(SS_TAP(X_F4)));
                 break;
-            case M_M11:
+            case M_M10:
                 SEND_STRING(SS_TAP(X_F10));
                 break;
-            case M_M12:
+            case M_M11:
                 SEND_STRING(SS_TAP(X_F11));
                 break;
-            case M_M13:
+            case M_M12:
                 SEND_STRING(SS_LSFT(SS_TAP(X_F11)));
                 break;
             case M_M20:
