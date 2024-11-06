@@ -310,40 +310,40 @@ void matrix_scan_user(void) {
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (record->event.pressed) {
         switch (keycode) {
-            case M0://build
+            case MM0://build
                 SEND_STRING(SS_LCTL(SS_LSFT(SS_TAP(X_B))));
                 break;
-            case M1://run
+            case MM1://run
                 SEND_STRING(SS_LCTL(SS_TAP(X_F5)));
                 break;
-            case M2://debug
+            case MM2://debug
                 SEND_STRING(SS_TAP(X_F5));
                 break;
-            case M3://stop debug
+            case MM3://stop debug
                 SEND_STRING(SS_LSFT(SS_TAP(X_F5)));
                 break;
-            case M4://close
+            case MM4://close
                 SEND_STRING(SS_LALT(SS_TAP(X_F4)));
                 break;
-            case M5://step over
+            case MM5://step over
                 SEND_STRING(SS_TAP(X_F10));
                 break;
-            case M6://step in
+            case MM6://step in
                 SEND_STRING(SS_TAP(X_F11));
                 break;
-            case M7://step out
+            case MM7://step out
                 SEND_STRING(SS_LSFT(SS_TAP(X_F11)));
                 break;
-            case M15://select and look up
+            case MM15://select and look up
                 SEND_STRING(SS_TAP(X_BTN1) SS_TAP(X_BTN1) SS_TAP(X_BTN1) SS_DELAY(100) SS_LCTL(SS_TAP(X_C)) SS_DELAY(100) SS_LCTL(SS_TAP(X_T)) SS_DELAY(200) SS_LCTL(SS_TAP(X_V)) SS_DELAY(100) SS_TAP(X_ENTER));
                 break;
-            case M16://select and copy
+            case MM16://select and copy
                 SEND_STRING(SS_TAP(X_BTN1) SS_TAP(X_BTN1) SS_DELAY(200) SS_LCTL(SS_TAP(X_C)) SS_DELAY(100) SS_LCTL(SS_TAP(X_TAB)));
                 break;
-            case M17://copy and switch tab
+            case MM17://copy and switch tab
                 SEND_STRING(SS_LCTL(SS_TAP(X_C)) SS_DELAY(100) SS_LCTL(SS_TAP(X_TAB)));
                 break;
-            case M18://focus and enter
+            case MM18://focus and enter
                 SEND_STRING(SS_TAP(X_BTN1) SS_LCTL(SS_TAP(X_V)) SS_DELAY(100) SS_TAP(X_ENTER) SS_DELAY(100) SS_TAP(X_ENTER));
                 break;
         }

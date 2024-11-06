@@ -100,316 +100,316 @@
         {
             "name": "Macro0",
             "title": "Macro 0",
-            "shortName": "M0"
+            "shortName": "MM0"
         },
         {
             "name": "Macro1",
             "title": "Macro 1",
-            "shortName": "M1"
+            "shortName": "MM1"
         },
         {
             "name": "Macro2",
             "title": "Macro 2",
-            "shortName": "M2"
+            "shortName": "MM2"
         },
         {
             "name": "Macro3",
             "title": "Macro 3",
-            "shortName": "M3"
+            "shortName": "MM3"
         },
         {
             "name": "Macro4",
             "title": "Macro 4",
-            "shortName": "M4"
+            "shortName": "MM4"
         },
         {
             "name": "Macro5",
             "title": "Macro 5",
-            "shortName": "M5"
+            "shortName": "MM5"
         },
         {
             "name": "Macro6",
             "title": "Macro 6",
-            "shortName": "M6"
+            "shortName": "MM6"
         },
         {
             "name": "Macro7",
             "title": "Macro 7",
-            "shortName": "M7"
+            "shortName": "MM7"
         },
         {
             "name": "Macro8",
             "title": "Macro 8",
-            "shortName": "M8"
+            "shortName": "MM8"
         },
         {
             "name": "Macro9",
             "title": "Macro 9",
-            "shortName": "M9"
+            "shortName": "MM9"
         },
         {
             "name": "Macro10",
             "title": "Macro 10",
-            "shortName": "M10"
+            "shortName": "MM10"
         },
         {
             "name": "Macro11",
             "title": "Macro 11",
-            "shortName": "M11"
+            "shortName": "MM11"
         },
         {
             "name": "Macro12",
             "title": "Macro 12",
-            "shortName": "M12"
+            "shortName": "MM12"
         },
         {
             "name": "Macro13",
             "title": "Macro 13",
-            "shortName": "M13"
+            "shortName": "MM13"
         },
         {
             "name": "Macro14",
             "title": "Macro 14",
-            "shortName": "M14"
+            "shortName": "MM14"
         },
         {
             "name": "Macro15",
             "title": "Macro 15",
-            "shortName": "M15"
+            "shortName": "MM15"
         },
         {
             "name": "Macro16",
             "title": "Macro 16",
-            "shortName": "M16"
+            "shortName": "MM16"
         },
         {
             "name": "Macro17",
             "title": "Macro 17",
-            "shortName": "M17"
+            "shortName": "MM17"
         },
         {
             "name": "Macro18",
             "title": "Macro 18",
-            "shortName": "M18"
+            "shortName": "MM18"
         },
         {
             "name": "Macro19",
             "title": "Macro 19",
-            "shortName": "M19"
+            "shortName": "MM19"
         },
         {
             "name": "Macro20",
             "title": "Macro 20",
-            "shortName": "M20"
+            "shortName": "MM20"
         },
         {
             "name": "Macro21",
             "title": "Macro 21",
-            "shortName": "M21"
+            "shortName": "MM21"
         },
         {
             "name": "Macro22",
             "title": "Macro 22",
-            "shortName": "M22"
+            "shortName": "MM22"
         },
         {
             "name": "Macro23",
             "title": "Macro 23",
-            "shortName": "M23"
+            "shortName": "MM23"
         },
         {
             "name": "Macro24",
             "title": "Macro 24",
-            "shortName": "M24"
+            "shortName": "MM24"
         },
         {
             "name": "Macro25",
             "title": "Macro 25",
-            "shortName": "M25"
+            "shortName": "MM25"
         },
         {
             "name": "Macro26",
             "title": "Macro 26",
-            "shortName": "M26"
+            "shortName": "MM26"
         },
         {
             "name": "Macro27",
             "title": "Macro 27",
-            "shortName": "M27"
+            "shortName": "MM27"
         },
         {
             "name": "Macro28",
             "title": "Macro 28",
-            "shortName": "M28"
+            "shortName": "MM28"
         },
         {
             "name": "Macro29",
             "title": "Macro 29",
-            "shortName": "M29"
+            "shortName": "MM29"
         }
     ],
     "macros": [
         {
             "name": "Macro0",
             "title": "Macro 0",
-            "shortName": "M0",
+            "shortName": "MM0",
             "code": "SEND_STRING(SS_LCTL(SS_LSFT(SS_TAP(X_B))));"
         },
         {
             "name": "Macro1",
             "title": "Macro 1",
-            "shortName": "M1",
+            "shortName": "MM1",
             "code": "SEND_STRING(SS_LCTL(SS_TAP(X_F5)));"
         },
         {
             "name": "Macro2",
             "title": "Macro 2",
-            "shortName": "M2",
+            "shortName": "MM2",
             "code": "SEND_STRING(SS_TAP(X_F5));"
         },
         {
             "name": "Macro3",
             "title": "Macro 3",
-            "shortName": "M3",
+            "shortName": "MM3",
             "code": "SEND_STRING(SS_LSFT(SS_TAP(X_F5)));"
         },
         {
             "name": "Macro4",
             "title": "Macro 4",
-            "shortName": "M4",
+            "shortName": "MM4",
             "code": "SEND_STRING(SS_LALT(SS_TAP(X_F4)));"
         },
         {
             "name": "Macro5",
             "title": "Macro 5",
-            "shortName": "M5"
+            "shortName": "MM5"
         },
         {
             "name": "Macro6",
             "title": "Macro 6",
-            "shortName": "M6"
+            "shortName": "MM6"
         },
         {
             "name": "Macro7",
             "title": "Macro 7",
-            "shortName": "M7"
+            "shortName": "MM7"
         },
         {
             "name": "Macro8",
             "title": "Macro 8",
-            "shortName": "M8"
+            "shortName": "MM8"
         },
         {
             "name": "Macro9",
             "title": "Macro 9",
-            "shortName": "M9"
+            "shortName": "MM9"
         },
         {
             "name": "Macro10",
             "title": "Macro 10",
-            "shortName": "M10",
+            "shortName": "MM10",
             "code": "SEND_STRING(SS_TAP(X_F10));"
         },
         {
             "name": "Macro11",
             "title": "Macro 11",
-            "shortName": "M11",
+            "shortName": "MM11",
             "code": "SEND_STRING(SS_TAP(X_F11));"
         },
         {
             "name": "Macro12",
             "title": "Macro 12",
-            "shortName": "M12",
+            "shortName": "MM12",
             "code": "SEND_STRING(SS_LSFT(SS_TAP(X_F11)));"
         },
         {
             "name": "Macro13",
             "title": "Macro 13",
-            "shortName": "M13"
+            "shortName": "MM13"
         },
         {
             "name": "Macro14",
             "title": "Macro 14",
-            "shortName": "M14"
+            "shortName": "MM14"
         },
         {
             "name": "Macro15",
             "title": "Macro 15",
-            "shortName": "M15"
+            "shortName": "MM15"
         },
         {
             "name": "Macro16",
             "title": "Macro 16",
-            "shortName": "M16"
+            "shortName": "MM16"
         },
         {
             "name": "Macro17",
             "title": "Macro 17",
-            "shortName": "M17"
+            "shortName": "MM17"
         },
         {
             "name": "Macro18",
             "title": "Macro 18",
-            "shortName": "M18"
+            "shortName": "MM18"
         },
         {
             "name": "Macro19",
             "title": "Macro 19",
-            "shortName": "M19"
+            "shortName": "MM19"
         },
         {
             "name": "Macro20",
             "title": "Macro 20",
-            "shortName": "M20",
+            "shortName": "MM20",
             "code": "SEND_STRING(SS_TAP(X_BTN1) SS_TAP(X_BTN1) SS_TAP(X_BTN1) SS_DELAY(100) SS_LCTL(SS_TAP(X_C)) SS_DELAY(100) SS_LCTL(SS_TAP(X_T)) SS_DELAY(200) SS_LCTL(SS_TAP(X_V)) SS_DELAY(100) SS_TAP(X_ENTER));"
         },
         {
             "name": "Macro21",
             "title": "Macro 21",
-            "shortName": "M21",
+            "shortName": "MM21",
             "code": "SEND_STRING(SS_TAP(X_BTN1) SS_TAP(X_BTN1) SS_DELAY(200) SS_LCTL(SS_TAP(X_C)) SS_DELAY(100) SS_LCTL(SS_TAP(X_TAB)));"
         },
         {
             "name": "Macro22",
             "title": "Macro 22",
-            "shortName": "M22",
+            "shortName": "MM22",
             "code": "SEND_STRING(SS_LCTL(SS_TAP(X_C)) SS_DELAY(100) SS_LCTL(SS_TAP(X_TAB)));"
         },
         {
             "name": "Macro23",
             "title": "Macro 23",
-            "shortName": "M23",
+            "shortName": "MM23",
             "code": "SEND_STRING(SS_TAP(X_BTN1) SS_LCTL(SS_TAP(X_V)) SS_DELAY(100) SS_TAP(X_ENTER) SS_DELAY(100) SS_TAP(X_ENTER));"
         },
         {
             "name": "Macro24",
             "title": "Macro 24",
-            "shortName": "M24"
+            "shortName": "MM24"
         },
         {
             "name": "Macro25",
             "title": "Macro 25",
-            "shortName": "M25"
+            "shortName": "MM25"
         },
         {
             "name": "Macro26",
             "title": "Macro 26",
-            "shortName": "M26"
+            "shortName": "MM26"
         },
         {
             "name": "Macro27",
             "title": "Macro 27",
-            "shortName": "M27"
+            "shortName": "MM27"
         },
         {
             "name": "Macro28",
             "title": "Macro 28",
-            "shortName": "M28"
+            "shortName": "MM28"
         },
         {
             "name": "Macro29",
             "title": "Macro 29",
-            "shortName": "M29"
+            "shortName": "MM29"
         }
     ]
 }
