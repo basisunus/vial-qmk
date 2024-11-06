@@ -351,37 +351,40 @@ void matrix_scan_user(void) {
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (record->event.pressed) {
         switch (keycode) {
-            case M_M0:
+            case M_M0://build
                 SEND_STRING(SS_LCTL(SS_LSFT(SS_TAP(X_B))));
                 break;
-            case M_M1:
+            case M_M1://run
                 SEND_STRING(SS_LCTL(SS_TAP(X_F5)));
                 break;
-            case M_M2:
+            case M_M2://debug
                 SEND_STRING(SS_TAP(X_F5));
                 break;
-            case M_M4:
+            case M_M3://stop debug
+                SEND_STRING(SS_LSFT(SS_TAP(X_F5)));
+                break;
+            case M_M4://close
                 SEND_STRING(SS_LALT(SS_TAP(X_F4)));
                 break;
-            case M_M10:
+            case M_M10://step over
                 SEND_STRING(SS_TAP(X_F10));
                 break;
-            case M_M11:
+            case M_M11://step in
                 SEND_STRING(SS_TAP(X_F11));
                 break;
-            case M_M12:
+            case M_M12://step out
                 SEND_STRING(SS_LSFT(SS_TAP(X_F11)));
                 break;
-            case M_M20:
+            case M_M20://select and look up
                 SEND_STRING(SS_TAP(X_BTN1) SS_TAP(X_BTN1) SS_TAP(X_BTN1) SS_DELAY(100) SS_LCTL(SS_TAP(X_C)) SS_DELAY(100) SS_LCTL(SS_TAP(X_T)) SS_DELAY(200) SS_LCTL(SS_TAP(X_V)) SS_DELAY(100) SS_TAP(X_ENTER));
                 break;
-            case M_M21:
+            case M_M21://select and copy
                 SEND_STRING(SS_TAP(X_BTN1) SS_TAP(X_BTN1) SS_DELAY(200) SS_LCTL(SS_TAP(X_C)) SS_DELAY(100) SS_LCTL(SS_TAP(X_TAB)));
                 break;
-            case M_M22:
+            case M_M22://copy and switch tab
                 SEND_STRING(SS_LCTL(SS_TAP(X_C)) SS_DELAY(100) SS_LCTL(SS_TAP(X_TAB)));
                 break;
-            case M_M23:
+            case M_M23://focus and enter
                 SEND_STRING(SS_TAP(X_BTN1) SS_LCTL(SS_TAP(X_V)) SS_DELAY(100) SS_TAP(X_ENTER) SS_DELAY(100) SS_TAP(X_ENTER));
                 break;
         }
