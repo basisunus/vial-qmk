@@ -11,6 +11,7 @@ MIDI_ENABLE = yes
 VIALRGB_ENABLE = yes
 VIAL_ENCODERS_ENABLE = no
 ENCODER_MAP_ENABLE = no
+MACRO_ENABLE = yes
 
 # fix unresposive keypad after sleep
 NO_USB_STARTUP_CHECK = yes

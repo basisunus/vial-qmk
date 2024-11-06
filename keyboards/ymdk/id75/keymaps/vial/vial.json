@@ -1,96 +1,415 @@
 {
-  "name": "ID75 V3",
-  "vendorId": "0x45D4",
-  "productId": "0x0075",
-  "lighting": "vialrgb",
-  "matrix": { "rows": 5, "cols": 15 },
-  "layouts": {
-    "keymap": [
-      [
-        "0,0",
-        "0,1",
-        "0,2",
-        "0,3",
-        "0,4",
-        "0,5",
-        "0,6",
-        "0,7",
-        "0,8",
-        "0,9",
-        "0,10",
-        "0,11",
-        "0,12",
-        "0,13",
-        "0,14"
-      ],
-      [
-        "1,0",
-        "1,1",
-        "1,2",
-        "1,3",
-        "1,4",
-        "1,5",
-        "1,6",
-        "1,7",
-        "1,8",
-        "1,9",
-        "1,10",
-        "1,11",
-        "1,12",
-        "1,13",
-        "1,14"
-      ],
-      [
-        "2,0",
-        "2,1",
-        "2,2",
-        "2,3",
-        "2,4",
-        "2,5",
-        "2,6",
-        "2,7",
-        "2,8",
-        "2,9",
-        "2,10",
-        "2,11",
-        "2,12",
-        "2,13",
-        "2,14"
-      ],
-      [
-        "3,0",
-        "3,1",
-        "3,2",
-        "3,3",
-        "3,4",
-        "3,5",
-        "3,6",
-        "3,7",
-        "3,8",
-        "3,9",
-        "3,10",
-        "3,11",
-        "3,12",
-        "3,13",
-        "3,14"
-      ],
-      [
-        "4,0",
-        "4,1",
-        "4,2",
-        "4,3",
-        "4,4",
-        "4,5",
-        "4,6",
-        "4,7",
-        "4,8",
-        "4,9",
-        "4,10",
-        "4,11",
-        "4,12",
-        "4,13",
-        "4,14"
-      ]
+    "name": "ID75 V3",
+    "vendorId": "0x45D4",
+    "productId": "0x0075",
+    "lighting": "vialrgb",
+    "matrix": {
+        "rows": 5,
+        "cols": 15
+    },
+    "layouts": {
+        "keymap": [
+            [
+                "0,0",
+                "0,1",
+                "0,2",
+                "0,3",
+                "0,4",
+                "0,5",
+                "0,6",
+                "0,7",
+                "0,8",
+                "0,9",
+                "0,10",
+                "0,11",
+                "0,12",
+                "0,13",
+                "0,14"
+            ],
+            [
+                "1,0",
+                "1,1",
+                "1,2",
+                "1,3",
+                "1,4",
+                "1,5",
+                "1,6",
+                "1,7",
+                "1,8",
+                "1,9",
+                "1,10",
+                "1,11",
+                "1,12",
+                "1,13",
+                "1,14"
+            ],
+            [
+                "2,0",
+                "2,1",
+                "2,2",
+                "2,3",
+                "2,4",
+                "2,5",
+                "2,6",
+                "2,7",
+                "2,8",
+                "2,9",
+                "2,10",
+                "2,11",
+                "2,12",
+                "2,13",
+                "2,14"
+            ],
+            [
+                "3,0",
+                "3,1",
+                "3,2",
+                "3,3",
+                "3,4",
+                "3,5",
+                "3,6",
+                "3,7",
+                "3,8",
+                "3,9",
+                "3,10",
+                "3,11",
+                "3,12",
+                "3,13",
+                "3,14"
+            ],
+            [
+                "4,0",
+                "4,1",
+                "4,2",
+                "4,3",
+                "4,4",
+                "4,5",
+                "4,6",
+                "4,7",
+                "4,8",
+                "4,9",
+                "4,10",
+                "4,11",
+                "4,12",
+                "4,13",
+                "4,14"
+            ]
+        ]
+    },
+    "customKeycodes": [
+        {
+            "name": "Macro0",
+            "title": "Macro 0",
+            "shortName": "M0"
+        },
+        {
+            "name": "Macro1",
+            "title": "Macro 1",
+            "shortName": "M1"
+        },
+        {
+            "name": "Macro2",
+            "title": "Macro 2",
+            "shortName": "M2"
+        },
+        {
+            "name": "Macro3",
+            "title": "Macro 3",
+            "shortName": "M3"
+        },
+        {
+            "name": "Macro4",
+            "title": "Macro 4",
+            "shortName": "M4"
+        },
+        {
+            "name": "Macro5",
+            "title": "Macro 5",
+            "shortName": "M5"
+        },
+        {
+            "name": "Macro6",
+            "title": "Macro 6",
+            "shortName": "M6"
+        },
+        {
+            "name": "Macro7",
+            "title": "Macro 7",
+            "shortName": "M7"
+        },
+        {
+            "name": "Macro8",
+            "title": "Macro 8",
+            "shortName": "M8"
+        },
+        {
+            "name": "Macro9",
+            "title": "Macro 9",
+            "shortName": "M9"
+        },
+        {
+            "name": "Macro10",
+            "title": "Macro 10",
+            "shortName": "M10"
+        },
+        {
+            "name": "Macro11",
+            "title": "Macro 11",
+            "shortName": "M11"
+        },
+        {
+            "name": "Macro12",
+            "title": "Macro 12",
+            "shortName": "M12"
+        },
+        {
+            "name": "Macro13",
+            "title": "Macro 13",
+            "shortName": "M13"
+        },
+        {
+            "name": "Macro14",
+            "title": "Macro 14",
+            "shortName": "M14"
+        },
+        {
+            "name": "Macro15",
+            "title": "Macro 15",
+            "shortName": "M15"
+        },
+        {
+            "name": "Macro16",
+            "title": "Macro 16",
+            "shortName": "M16"
+        },
+        {
+            "name": "Macro17",
+            "title": "Macro 17",
+            "shortName": "M17"
+        },
+        {
+            "name": "Macro18",
+            "title": "Macro 18",
+            "shortName": "M18"
+        },
+        {
+            "name": "Macro19",
+            "title": "Macro 19",
+            "shortName": "M19"
+        },
+        {
+            "name": "Macro20",
+            "title": "Macro 20",
+            "shortName": "M20"
+        },
+        {
+            "name": "Macro21",
+            "title": "Macro 21",
+            "shortName": "M21"
+        },
+        {
+            "name": "Macro22",
+            "title": "Macro 22",
+            "shortName": "M22"
+        },
+        {
+            "name": "Macro23",
+            "title": "Macro 23",
+            "shortName": "M23"
+        },
+        {
+            "name": "Macro24",
+            "title": "Macro 24",
+            "shortName": "M24"
+        },
+        {
+            "name": "Macro25",
+            "title": "Macro 25",
+            "shortName": "M25"
+        },
+        {
+            "name": "Macro26",
+            "title": "Macro 26",
+            "shortName": "M26"
+        },
+        {
+            "name": "Macro27",
+            "title": "Macro 27",
+            "shortName": "M27"
+        },
+        {
+            "name": "Macro28",
+            "title": "Macro 28",
+            "shortName": "M28"
+        },
+        {
+            "name": "Macro29",
+            "title": "Macro 29",
+            "shortName": "M29"
+        }
+    ],
+    "macros": [
+        {
+            "name": "Macro0",
+            "title": "Macro 0",
+            "shortName": "M0",
+            "code": "SEND_STRING(SS_LCTL(SS_LSFT(SS_TAP(X_B))));"
+        },
+        {
+            "name": "Macro1",
+            "title": "Macro 1",
+            "shortName": "M1",
+            "code": "SEND_STRING(SS_LCTL(SS_TAP(X_F5)));"
+        },
+        {
+            "name": "Macro2",
+            "title": "Macro 2",
+            "shortName": "M2",
+            "code": "SEND_STRING(SS_TAP(X_F5));"
+        },
+        {
+            "name": "Macro3",
+            "title": "Macro 3",
+            "shortName": "M3",
+            "code": "SEND_STRING(SS_LSFT(SS_TAP(X_F5)));"
+        },
+        {
+            "name": "Macro4",
+            "title": "Macro 4",
+            "shortName": "M4",
+            "code": "SEND_STRING(SS_LALT(SS_TAP(X_F4)));"
+        },
+        {
+            "name": "Macro5",
+            "title": "Macro 5",
+            "shortName": "M5",
+            "code": "SEND_STRING(SS_TAP(X_F10));"
+        },
+        {
+            "name": "Macro6",
+            "title": "Macro 6",
+            "shortName": "M6",
+            "code": "SEND_STRING(SS_TAP(X_F11));"
+        },
+        {
+            "name": "Macro7",
+            "title": "Macro 7",
+            "shortName": "M7",
+            "code": "SEND_STRING(SS_LSFT(SS_TAP(X_F11)));"
+        },
+        {
+            "name": "Macro8",
+            "title": "Macro 8",
+            "shortName": "M8"
+        },
+        {
+            "name": "Macro9",
+            "title": "Macro 9",
+            "shortName": "M9"
+        },
+        {
+            "name": "Macro10",
+            "title": "Macro 10",
+            "shortName": "M10"
+        },
+        {
+            "name": "Macro11",
+            "title": "Macro 11",
+            "shortName": "M11"
+        },
+        {
+            "name": "Macro12",
+            "title": "Macro 12",
+            "shortName": "M12"
+        },
+        {
+            "name": "Macro13",
+            "title": "Macro 13",
+            "shortName": "M13"
+        },
+        {
+            "name": "Macro14",
+            "title": "Macro 14",
+            "shortName": "M14"
+        },
+        {
+            "name": "Macro15",
+            "title": "Macro 15",
+            "shortName": "M15",
+            "code": "SEND_STRING(SS_TAP(X_BTN1) SS_TAP(X_BTN1) SS_TAP(X_BTN1) SS_DELAY(100) SS_LCTL(SS_TAP(X_C)) SS_DELAY(100) SS_LCTL(SS_TAP(X_T)) SS_DELAY(200) SS_LCTL(SS_TAP(X_V)) SS_DELAY(100) SS_TAP(X_ENTER));"
+        },
+        {
+            "name": "Macro16",
+            "title": "Macro 16",
+            "shortName": "M16",
+            "code": "SEND_STRING(SS_TAP(X_BTN1) SS_TAP(X_BTN1) SS_DELAY(200) SS_LCTL(SS_TAP(X_C)) SS_DELAY(100) SS_LCTL(SS_TAP(X_TAB)));"
+        },
+        {
+            "name": "Macro17",
+            "title": "Macro 17",
+            "shortName": "M17",
+            "code": "SEND_STRING(SS_LCTL(SS_TAP(X_C)) SS_DELAY(100) SS_LCTL(SS_TAP(X_TAB)));"
+        },
+        {
+            "name": "Macro18",
+            "title": "Macro 18",
+            "shortName": "M18",
+            "code": "SEND_STRING(SS_TAP(X_BTN1) SS_LCTL(SS_TAP(X_V)) SS_DELAY(100) SS_TAP(X_ENTER) SS_DELAY(100) SS_TAP(X_ENTER));"
+        },
+        {
+            "name": "Macro19",
+            "title": "Macro 19",
+            "shortName": "M19"
+        },
+        {
+            "name": "Macro20",
+            "title": "Macro 20",
+            "shortName": "M20"
+        },
+        {
+            "name": "Macro21",
+            "title": "Macro 21",
+            "shortName": "M21"
+        },
+        {
+            "name": "Macro22",
+            "title": "Macro 22",
+            "shortName": "M22"
+        },
+        {
+            "name": "Macro23",
+            "title": "Macro 23",
+            "shortName": "M23"
+        },
+        {
+            "name": "Macro24",
+            "title": "Macro 24",
+            "shortName": "M24"
+        },
+        {
+            "name": "Macro25",
+            "title": "Macro 25",
+            "shortName": "M25"
+        },
+        {
+            "name": "Macro26",
+            "title": "Macro 26",
+            "shortName": "M26"
+        },
+        {
+            "name": "Macro27",
+            "title": "Macro 27",
+            "shortName": "M27"
+        },
+        {
+            "name": "Macro28",
+            "title": "Macro 28",
+            "shortName": "M28"
+        },
+        {
+            "name": "Macro29",
+            "title": "Macro 29",
+            "shortName": "M29"
+        }
     ]
-  }
 }
