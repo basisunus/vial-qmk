@@ -306,4 +306,17 @@ void matrix_scan_user(void) {
         }
     }
 }
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (record->event.pressed) {
+        switch (keycode) {
+            case M_M15:
+                SEND_STRING(SS_TAP(X_BTN1) SS_TAP(X_BTN1) SS_TAP(X_BTN1) SS_DELAY(100) SS_LCTL(SS_TAP(X_C)) SS_DELAY(100) SS_LCTL(SS_TAP(X_T)) SS_DELAY(200) SS_LCTL(SS_TAP(X_V)) SS_DELAY(100) SS_TAP(X_ENTER));
+                //SS_TAP(KC_BTN1) SS_TAP(KC_BTN1) SS_TAP(KC_BTN1) SS_DELAY(100) SS_TAP(LCTL(KC_C)) SS_DELAY(100) SS_TAP(LCTL(KC_T)) SS_DELAY(200) SS_TAP(LCTL(KC_V)) SS_DELAY(100) SS_TAP(KC_ENTER));
+            break;
+            }
+    }
+    return true;
+}
+
 //#endif
