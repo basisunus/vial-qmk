@@ -310,11 +310,40 @@ void matrix_scan_user(void) {
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (record->event.pressed) {
         switch (keycode) {
+            case M_M0:
+                SEND_STRING(SS_LCTL(SS_LSFT(SS_TAP(X_B))));
+                break;
+            case M_M1:
+                SEND_STRING(SS_LCTL(SS_TAP(X_F5)));
+                break;
+            case M_M2:
+                SEND_STRING(SS_TAP(X_F5));
+                break;
+            case M_M4:
+                SEND_STRING(SS_LALT(SS_TAP(X_F4)));
+                break;
+            case M_M5:
+                SEND_STRING(SS_TAP(X_F10));
+                break;
+            case M_M6:
+                SEND_STRING(SS_TAP(X_F11));
+                break;
+            case M_M7:
+                SEND_STRING(SS_LSFT(SS_TAP(X_F11)));
+                break;
             case M_M15:
                 SEND_STRING(SS_TAP(X_BTN1) SS_TAP(X_BTN1) SS_TAP(X_BTN1) SS_DELAY(100) SS_LCTL(SS_TAP(X_C)) SS_DELAY(100) SS_LCTL(SS_TAP(X_T)) SS_DELAY(200) SS_LCTL(SS_TAP(X_V)) SS_DELAY(100) SS_TAP(X_ENTER));
-                //SS_TAP(KC_BTN1) SS_TAP(KC_BTN1) SS_TAP(KC_BTN1) SS_DELAY(100) SS_TAP(LCTL(KC_C)) SS_DELAY(100) SS_TAP(LCTL(KC_T)) SS_DELAY(200) SS_TAP(LCTL(KC_V)) SS_DELAY(100) SS_TAP(KC_ENTER));
-            break;
-            }
+                break;
+            case M_M16:
+                SEND_STRING(SS_TAP(X_BTN1) SS_TAP(X_BTN1) SS_DELAY(200) SS_LCTL(SS_TAP(X_C)) SS_DELAY(100) SS_LCTL(SS_TAP(X_TAB)));
+                break;
+            case M_M17:
+                SEND_STRING(SS_LCTL(SS_TAP(X_C)) SS_DELAY(100) SS_LCTL(SS_TAP(X_TAB)));
+                break;
+            case M_M18:
+                SEND_STRING(SS_TAP(X_BTN1) SS_LCTL(SS_TAP(X_V)) SS_DELAY(100) SS_TAP(X_ENTER) SS_DELAY(100) SS_TAP(X_ENTER));
+                break;
+        }
     }
     return true;
 }
