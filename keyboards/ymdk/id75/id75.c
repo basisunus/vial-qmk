@@ -129,7 +129,7 @@ const uint8_t PROGMEM layercolors[LAYER_NUM][GRID_COUNT*3] =
 	{ C_BLK, C_RB1, C_RB2, C_RB3, C_RB4, C_RB5, C_BLK, C_BLK, C_BLK, C_RB1, C_RB2, C_RB3, C_RB4, C_RB5, C_BLK,  //1
 	  C_BLK, C_RB6, C_RB1, C_RB2, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_RB6, C_RB1, C_RB2, C_RB3, C_RB4, C_BLK,  //2
 	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_RB5, C_RB6, C_RB1, C_RB2, C_RB3, C_BLK,  //3
-	  C_BLK, C_RB4, C_RB5, C_RB6, C_RB1, C_BLK, C_BLK, C_BLK, C_BLK, C_RB4, C_RB5, C_RB6, C_RB1, C_RB2, C_BLK,  //4
+	  C_BLK, C_RB4, C_RB5, C_RB6, C_RB1, C_RB2, C_BLK, C_BLK, C_BLK, C_RB4, C_RB5, C_RB6, C_RB1, C_RB2, C_BLK,  //4
 	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK },//5
     //SYSTEM
     //--1------2------3------4------5------6------7------8------9-----10-----11-----12-----13-----14-----15
@@ -345,6 +345,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 break;
             case MM18://focus and enter
                 SEND_STRING(SS_TAP(X_BTN1) SS_LCTL(SS_TAP(X_V)) SS_DELAY(100) SS_TAP(X_ENTER) SS_DELAY(100) SS_TAP(X_ENTER));
+                break;
+            case MM19://open link in new tab
+                SEND_STRING(SS_LCTL(SS_TAP(X_BTN1)));
                 break;
         }
     }
