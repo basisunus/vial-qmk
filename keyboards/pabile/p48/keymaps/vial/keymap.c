@@ -10,8 +10,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
        KC_LALT,     KC_A,        KC_S,        KC_D,        KC_F,        KC_G,        KC_H,        KC_J,        KC_K,        KC_L,        KC_SCLN,     KC_QUOT,
 //  | |---LCTRL----|-----Z------|-----X------|-----C------|-----V------|-----B------|-----N------|-----M------|---( ,< )---|---( .> )---|---( /? )---|---RCTRL----|
        KC_LCTL,     KC_Z,        KC_X,        KC_C,        KC_V,        KC_B,        KC_N,        KC_M,        KC_COMM,     KC_DOT,      KC_SLSH,     KC_RCTL,
-//  | |----LAYR----|----WIN-----|---NUMPAD---|----FUNC----|----SPC-----|----SPC-----|----ENTER---|----SHIFT---|---NUMBER---|---NUMPAD---|---MOUSE----|----LAYR----|
-       OSL(LAYR),   KC_LGUI,     OSL(NPAD),   OSL(FUNC),   KC_SPC,      LSFT_T(KC_SPC), KC_ENT,   OSM(MOD_RSFT), OSL(NUMB), OSL(NPAD),   OSL(MOUS),   OSL(LAYR)
+//  | |----LAYR----|----WIN-----|---MACRO----|----FUNC----|----SPC-----|----SPC-----|----ENTER---|----SHIFT---|---NUMBER---|---NUMPAD---|---MOUSE----|----LAYR----|
+       OSL(LAYR),   KC_LGUI,     TG(MCRO),    OSL(FUNC),   KC_SPC,     LSFT_T(KC_SPC), KC_ENT,   OSM(MOD_RSFT), OSL(NUMB),  OSL(NPAD),   TG(MOUS),    OSL(LAYR)
 //   \|____________|____________|____________|____________|____________|____________|____________|____________|____________|____________|____________|____________|
     ),
   [NUMB] = LAYOUT(
@@ -62,8 +62,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
        KC_ENT,      KC_MS_L,     KC_MS_D,     KC_MS_R,     KC_TRNS,     KC_VOLD,     KC_WH_D,     KC_MS_L,     KC_BTN3,     KC_MS_R,     KC_ENT,      KC_TRNS,
 //  | |----DEL-----|-----▽------|-----▽------|-----▽------|-----▽------|----MUTE----|--MDLMBTN---|-----▽------|--MOUSDWN---|-----▽------|----DEL-----|-----NO-----|
        KC_DEL,      KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_MUTE,     KC_BTN3,     KC_TRNS,     KC_MS_D,     KC_TRNS,     KC_DEL,      KC_NO,
-//  | |-----▽------|-----▽------|-----▽------|--LFTMBTN---|--RGTMBTN---|--MSWHLLFT--|--MSWHLRGT--|--LFTMBTN---|--RGTMBTN---|-----▽------|-----NO-----|-----▽------|
-       KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_BTN1,     KC_BTN2,     KC_WH_L,     KC_WH_R,     KC_BTN1,     KC_BTN2,     KC_TRNS,     KC_NO,       KC_TRNS
+//  | |-----▽------|-----▽------|-----▽------|--LFTMBTN---|--RGTMBTN---|--MSWHLLFT--|--MSWHLRGT--|--LFTMBTN---|--RGTMBTN---|-----▽------|-----▽------|-----▽------|
+       KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_BTN1,     KC_BTN2,     KC_WH_L,     KC_WH_R,     KC_BTN1,     KC_BTN2,     KC_TRNS,     KC_TRNS,     KC_TRNS
 //   \|____________|____________|____________|____________|____________|____________|____________|____________|____________|____________|____________|____________|
     ),
   [CTRL] = LAYOUT(
@@ -108,11 +108,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [MCRO] = LAYOUT(
 /*   _______1____________2____________3____________4____________5____________6____________7____________8____________9___________10___________11___________12______
     | \            \            \            \            \            \            \            \            \            \            \            \            \ */
-//  | |-----▽------|----MM0-----|----MM1-----|----MM2-----|----MM3-----|----MM4-----|----MM0-----|----MM1-----|----MM2-----|----MM3-----|----MM4-----|-----▽------|
+//  | |-----▽------|----MM0-----|----MM1-----|----MM2-----|----MM3-----|----MM4-----|----MM5-----|----MM6-----|----MM7-----|----MM8-----|----MM9-----|-----▽------|
        KC_TRNS,     MM0,         MM1,         MM2,         MM3,         MM4,         MM5,         MM6,         MM7,         MM8,         MM9,          KC_TRNS,    
-//  | |-----▽------|----MM5-----|----MM6-----|----MM7-----|----MM8-----|----MM9-----|----MM5-----|----MM6-----|----MM7-----|----MM8-----|----MM9-----|-----▽------|
+//  | |-----▽------|----MM10----|----MM11----|----MM12----|----MM13----|----MM14----|----MM15----|----MM16----|----MM17----|----MM18----|----MM19----|-----▽------|
        KC_TRNS,     MM10,        MM11,        MM12,        MM13,        MM14,        MM15,        MM16,        MM17,        MM18,        MM19,         KC_TRNS,    
-//  | |-----▽------|----MM10----|----MM11----|----MM12----|----MM13----|----MM14----|----MM10----|----MM11----|----MM12----|----MM13----|----MM14----|-----▽------|
+//  | |-----▽------|----MM20----|----MM21----|----MM22----|----MM23----|----MM24----|----MM25----|----MM26----|----MM27----|----MM28----|----MM29----|-----▽------|
        KC_TRNS,     MM20,        MM21,        MM22,        MM23,        MM24,        MM25,        MM26,        MM27,        MM28,        MM29,         KC_TRNS,    
 //  | |-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|-----NO-----|-----▽------|
        KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_NO,       KC_TRNS

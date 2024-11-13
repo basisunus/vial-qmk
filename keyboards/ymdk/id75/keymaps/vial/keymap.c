@@ -28,8 +28,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
        KC_LALT,     KC_A,        KC_S,        KC_D,        KC_F,        KC_G,        KC_HOME,     KC_INS,      KC_PGUP,     KC_H,        KC_J,        KC_K,        KC_L,        KC_SCLN,     KC_QUOT,     //3
 //  | |---LCTRL----|-----Z------|-----X------|-----C------|-----V------|-----B------|----END-----|-----UP-----|---PGDWN----|-----N------|-----M------|---( ,< )---|---( .> )---|---( /? )---|---RCTRL----|
        KC_LCTL,     KC_Z,        KC_X,        KC_C,        KC_V,        KC_B,        KC_END,      KC_UP,       KC_PGDN,     KC_N,        KC_M,        KC_COMM,     KC_DOT,      KC_SLSH,     KC_RCTL,     //4
-//  | |----LAYR----|----WIN-----|---MEDIA----|----NPAD----|----SPC-----|----SPC-----|----ENTER---|---SHIFT----|---RIGHT----|---ENTER----|----SHIFT---|---SHIFT----|---NUMPAD---|---MOUSE----|----LAYR----|
-       OSL(LAYR),   KC_LGUI,     OSL(MEDI),   OSL(NPAD),   KC_SPC,      LSFT_T(KC_SPC), KC_LEFT,  KC_DOWN,     KC_RGHT,     KC_ENT,      OSM(MOD_RSFT), KC_RSFT,   OSL(NPAD),   OSL(MOUS),   OSL(LAYR)    //5
+//  | |----LAYR----|----WIN-----|---MACRO----|----NPAD----|----SPC-----|----SPC-----|----ENTER---|---SHIFT----|---RIGHT----|---ENTER----|----SHIFT---|---SHIFT----|---NUMPAD---|---MOUSE----|----LAYR----|
+       OSL(LAYR),   KC_LGUI,     TG(MCRO),    TG(NPAD),    KC_SPC,     LSFT_T(KC_SPC), KC_LEFT,   KC_DOWN,     KC_RGHT,     KC_ENT,      OSM(MOD_RSFT), KC_RSFT,   OSL(NPAD),   TG(MOUS),    OSL(LAYR)    //5
 //   \|____________|____________|____________|____________|____________|____________|____________|____________|____________|____________|____________|____________|____________|____________|____________|
     ),
   [NPAD] = LAYOUT_ortho_5x15(
@@ -58,8 +58,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
        KC_ENT,      KC_MS_L,     KC_MS_D,     KC_MS_R,     KC_TRNS,     KC_TRNS,     KC_VOLD,     KC_TRNS,     KC_WH_D,     KC_MS_L,     KC_BTN3,     KC_MS_R,     KC_ENT,      KC_TRNS,     KC_TRNS,     //3
 //  | |----DEL-----|-----▽------|-----▽------|-----▽------|-----▽------|-----▽------|----MUTE----|--MSWHLUP---|--MDLMBTN---|-----▽------|--MOUSDWN---|-----▽------|----DEL-----|-----▽------|-----NO-----|
        KC_DEL,      KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_MUTE,     KC_WH_U,     KC_BTN3,     KC_TRNS,     KC_MS_D,     KC_TRNS,     KC_DEL,      KC_TRNS,     KC_NO,       //4
-//  | |-----▽------|-----▽------|-----▽------|-----▽------|--LFTMBTN---|--RGTMBTN---|--MSWHLLFT--|--MSWHLDWN--|--MSWHLRGT--|--LFTMBTN---|--RGTMBTN---|-----▽------|-----▽------|-----NO-----|-----▽------|
-       KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_BTN1,     KC_BTN2,     KC_WH_L,     KC_WH_D,     KC_WH_R,     KC_BTN1,     KC_BTN2,     KC_TRNS,     KC_TRNS,     KC_NO,       KC_TRNS      //5
+//  | |-----▽------|-----▽------|-----▽------|-----▽------|--LFTMBTN---|--RGTMBTN---|--MSWHLLFT--|--MSWHLDWN--|--MSWHLRGT--|--LFTMBTN---|--RGTMBTN---|-----▽------|-----▽------|-----▽------|-----▽------|
+       KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_BTN1,     KC_BTN2,     KC_WH_L,     KC_WH_D,     KC_WH_R,     KC_BTN1,     KC_BTN2,     KC_TRNS,     KC_TRNS,     KC_TRNS,     KC_TRNS      //5
 //   \|____________|____________|____________|____________|____________|____________|____________|____________|____________|____________|____________|____________|____________|____________|____________|
     ),
   [CTRL] = LAYOUT_ortho_5x15(

@@ -375,19 +375,22 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             case MM12://step out
                 SEND_STRING(SS_LSFT(SS_TAP(X_F11)));
                 break;
-            case MM20://select and look up
+            case MM20://run
+                SEND_STRING(SS_LCTL(SS_TAP(X_W)));
+                break;
+            case MM21://select and look up
                 SEND_STRING(SS_TAP(X_BTN1) SS_TAP(X_BTN1) SS_TAP(X_BTN1) SS_DELAY(100) SS_LCTL(SS_TAP(X_C)) SS_DELAY(100) SS_LCTL(SS_TAP(X_T)) SS_DELAY(200) SS_LCTL(SS_TAP(X_V)) SS_DELAY(100) SS_TAP(X_ENTER));
                 break;
-            case MM21://select and copy
+            case MM22://select and copy
                 SEND_STRING(SS_TAP(X_BTN1) SS_TAP(X_BTN1) SS_DELAY(200) SS_LCTL(SS_TAP(X_C)) SS_DELAY(100) SS_LCTL(SS_TAP(X_TAB)));
                 break;
-            case MM22://copy and switch tab
+            case MM23://copy and switch tab
                 SEND_STRING(SS_LCTL(SS_TAP(X_C)) SS_DELAY(100) SS_LCTL(SS_TAP(X_TAB)));
                 break;
-            case MM23://focus and enter
+            case MM24://focus and enter
                 SEND_STRING(SS_TAP(X_BTN1) SS_LCTL(SS_TAP(X_V)) SS_DELAY(100) SS_TAP(X_ENTER) SS_DELAY(100) SS_TAP(X_ENTER));
                 break;
-            case MM24://open link in new tab
+            case MM25://open link in new tab
                 SEND_STRING(SS_LCTL(SS_TAP(X_BTN1)));
                 break;
         }
