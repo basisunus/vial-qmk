@@ -1,3 +1,4 @@
+#include "raw_hid.h"
 #include "p48.h"
 #include "types.h"
 #include <lib/lib8tion/lib8tion.h>
@@ -107,12 +108,14 @@ const uint8_t PROGMEM li[GRID_COUNT] =
 
 const uint8_t PROGMEM time_x_pos[4] = {0, 3, 6, 9};
 
-bool PROGMEM time_disp[GRID_COUNT] =
+char time_buffer[5] = {'0', '1', '2', '3'};
+
+uint8_t PROGMEM time_disp[GRID_COUNT] =
 {
-    false, false, false, false, false, false, false, false, false, false, false, false,
-    false, false, false, false, false, false, false, false, false, false, false, false,
-    false, false, false, false, false, false, false, false, false, false, false, false,
-    false, false, false, false, false, false, false, false, false, false, false, false
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
 const uint8_t PROGMEM layercolors[LAYER_NUM][GRID_COUNT*3] =
@@ -213,13 +216,6 @@ const uint8_t PROGMEM lc_npad_lock[GRID_COUNT*3] =
 	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_LCK, C_LCK, C_LCK, C_SYM, C_BLK,
 	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_LCK, C_LCK, C_LCK, C_LCK, C_ENT, C_SYM, C_BLK };
 
-const uint8_t PROGMEM timecolors[GRID_COUNT*3] = 
-    //--1------2------3------4------5------6------7------8------9-----10-----11-----12
-	{ C_RB1, C_RB1, C_RB1, C_RB3, C_RB3, C_RB3, C_RB5, C_RB5, C_RB5, C_RB7, C_RB7, C_RB7,  //1
-	  C_RB1, C_RB1, C_RB1, C_RB3, C_RB3, C_RB3, C_RB5, C_RB5, C_RB5, C_RB7, C_RB7, C_RB7,  //2
-	  C_RB1, C_RB1, C_RB1, C_RB3, C_RB3, C_RB3, C_RB5, C_RB5, C_RB5, C_RB7, C_RB7, C_RB7,  //3
-	  C_RB1, C_RB1, C_RB1, C_RB3, C_RB3, C_RB3, C_RB5, C_RB5, C_RB5, C_RB7, C_RB7, C_RB7 };//4
-
 HSV get_key_press_color(uint8_t i, HSV color_hsv) {
     if (ksp[i]) {
         // flash randomly for the pressed key
@@ -280,11 +276,26 @@ HSV get_layer_color(uint8_t layer, uint8_t i) {
 }
 
 HSV get_time_color(uint8_t i) {
-    HSV color_hsv = {C_BLK};
-    if (time_disp[i]) {
-        color_hsv.h = timecolors[li[i] * 3];
-        color_hsv.s = timecolors[li[i] * 3 + 1];
-        color_hsv.v = timecolors[li[i] * 3 + 2];
+  	HSV color_hsv;
+    uint16_t ci = time_disp[li[i]];
+    if (ci == 0)
+    {
+        color_hsv.h = 0;
+        color_hsv.s = 0;
+        color_hsv.v = 0;
+    }
+    else if (ci == 1)
+    {
+        color_hsv.h = 0;
+        color_hsv.s = 0;
+        color_hsv.v = 0xFF;
+    }
+    else
+    {
+        ci -= '0';
+        color_hsv.h = ci * 0xFF / 11;
+        color_hsv.s = 0xFF;
+        color_hsv.v = 0xFF;
     }
 
     return color_hsv;
@@ -332,20 +343,16 @@ void set_disp_time_char(char c, uint8_t x0) {
     uint8_t digit = c - '0';
     for (uint8_t y = 0; y < TYPE_ROW; ++y) {
         for (uint8_t x = 0; x < TYPE_COL; ++x) {
-            bool led_on                      = type_num[digit][y] & (1 << (2 - x));
-            time_disp[y * DISP_COL + x + x0] = led_on;
+            bool led_on = type_num[digit][y] & (1 << (2 - x));
+            if (led_on)
+                time_disp[y * DISP_COL + x + x0] = c;
         }
     }
 }
 
 void set_disp_time(void) {
-    char time_buffer[5] = {'2', '2', '2', '2'}; // hhmm0
-
-    // if (!serial_recv(time_buffer, sizeof(time_buffer)))
-    //     return;
-
     for (uint8_t i = 0; i < GRID_COUNT; ++i)
-        time_disp[i] = false;
+        time_disp[i] = 0;
     for (uint8_t i = 0; i < 4; ++i)
         set_disp_time_char(time_buffer[i], time_x_pos[i]);
 }
@@ -446,6 +453,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         }
     }
     return true;
+}
+
+void raw_hid_receive_kb(uint8_t *data, uint8_t length) {
+    uint8_t ls = sizeof(time_buffer);
+    ls = length < ls ? length : ls;
+    for (uint8_t i = 0; i < ls; i++) {
+        time_buffer[i] = data[i];
+    }
 }
 
 // #endif
