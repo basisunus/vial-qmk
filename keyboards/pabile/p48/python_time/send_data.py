@@ -14,8 +14,8 @@ import hid
 import time
 
 # Replace with your keyboard's Vendor ID and Product ID
-vendor_id = 0x594D
-product_id = 0x0075
+vendor_id = 0x8065
+product_id = 0x8048
 
 usage_page    = 0xFF60
 usage         = 0x61
