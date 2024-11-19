@@ -47,3 +47,16 @@ enum custom_keycodes {
     MM28,
     MM29
 };
+
+//display modes
+enum disp_modes {
+    DM_LAYER = 0,   //display color depending on key function
+    DM_TIME         //display current time from host
+};
+
+//keycodes for display modes
+enum disp_keycodes {
+    DK_LAYER = SAFE_RANGE,
+    DK_TIME
+};
+
