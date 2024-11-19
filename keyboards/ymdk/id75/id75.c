@@ -33,7 +33,7 @@ uint16_t idx_nums = 6;
 uint16_t idx_scrl = 59;
 uint16_t idx_nkro = 45;
 
-#define C_LYR	0xF7, 0x50, 0x50
+#define C_LYR	0xF0, 0xFF, 0xFF
 #define C_CMD	HSV_CORAL
 #define C_NUM	HSV_PINK
 #define C_ABC	HSV_YELLOW
@@ -323,7 +323,7 @@ void set_my_color(void) {
         uint16_t hue2 = hue + color_hsv.h;
         hue2 = hue2 > 255 ? hue2 - 256 : hue2;
         color_hsv.h = (uint8_t)(hue2);
-        color_hsv.s = sat;
+        color_hsv.s = (uint8_t)((float)(color_hsv.s) * sat / 255.0f);
         uint8_t time2 = hue2 < 64 || hue2 > 190 ? time / 2 : time;
         uint8_t val2 = val > time2 ? val - time2 : 0;
         color_hsv.v = color_hsv.v == 0 ? 0 : val2;
