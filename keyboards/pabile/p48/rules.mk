@@ -17,4 +17,6 @@ IOS_DEVICE_ENABLE = yes
 RGB_MATRIX_ENABLE = yes
 RGB_MATRIX_DRIVER = ws2812
 WS2812_DRIVER = vendor
+# enable usb communication
+SERIAL_ENABLE = yes
 

@@ -1,4 +1,5 @@
 #include "p48.h"
+#include "types.h"
 #include <lib/lib8tion/lib8tion.h>
 
 //#ifdef RGB_MATRIX_ENABLE
@@ -24,7 +25,8 @@ led_config_t g_led_config = { {
     4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4
 } };
 
-uint16_t my_speed = 0;
+uint8_t  disp_mode = DM_LAYER;
+uint16_t my_speed  = 0;
 bool sft_down = false;
 bool caps_lck = false;
 bool nums_lck = false;
@@ -103,6 +105,16 @@ const uint8_t PROGMEM li[GRID_COUNT] =
     47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 36
 };
 
+const uint8_t PROGMEM time_x_pos[4] = {0, 3, 6, 9};
+
+bool PROGMEM time_disp[GRID_COUNT] =
+{
+    false, false, false, false, false, false, false, false, false, false, false, false,
+    false, false, false, false, false, false, false, false, false, false, false, false,
+    false, false, false, false, false, false, false, false, false, false, false, false,
+    false, false, false, false, false, false, false, false, false, false, false, false
+};
+
 const uint8_t PROGMEM layercolors[LAYER_NUM][GRID_COUNT*3] =
 {
     //BASE
@@ -161,7 +173,7 @@ const uint8_t PROGMEM layercolors[LAYER_NUM][GRID_COUNT*3] =
 	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK },
     //SYSTEM
     //--1------2------3------4------5------6------7------8------9-----10-----11-----12
-	{ C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_CMD, C_CMD, C_RB1, C_CMD, C_RB1,
+    { C_RB1, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_CMD, C_CMD, C_RB1, C_CMD, C_RB1,
 	  C_BLK, C_RB5, C_RB5, C_RB5, C_RB5, C_RB5, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_RB4,
 	  C_LCK, C_RB4, C_RB4, C_RB4, C_RB4, C_RB4, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,
 	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK },
@@ -201,140 +213,167 @@ const uint8_t PROGMEM lc_npad_lock[GRID_COUNT*3] =
 	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_LCK, C_LCK, C_LCK, C_SYM, C_BLK,
 	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_LCK, C_LCK, C_LCK, C_LCK, C_ENT, C_SYM, C_BLK };
 
-void set_layer_color( uint8_t layer ) {
-  uint8_t val = rgb_matrix_config.hsv.v;
-  uint8_t hue = (uint16_t)(rgb_matrix_config.hsv.h);
-  uint8_t sat = rgb_matrix_config.hsv.s;
-  uint8_t time = scale16by8(g_rgb_timer, my_speed);
-  float offset = time < 128 ? time : 255 - time;;
-  offset *= 0.25f;
-  time = (uint8_t)(offset);
-  //val = val > time ? val - time : 0;
-  
-  bool shifted =
-      ((layer == BASE) && (sft_down || caps_lck)) ||
-      (layer == NUMB && sft_down) ||
-      (layer == NPAD && nums_lck);
+const uint8_t PROGMEM timecolors[GRID_COUNT*3] = 
+    //--1------2------3------4------5------6------7------8------9-----10-----11-----12
+	{ C_RB1, C_RB1, C_RB1, C_RB3, C_RB3, C_RB3, C_RB5, C_RB5, C_RB5, C_RB7, C_RB7, C_RB7,  //1
+	  C_RB1, C_RB1, C_RB1, C_RB3, C_RB3, C_RB3, C_RB5, C_RB5, C_RB5, C_RB7, C_RB7, C_RB7,  //2
+	  C_RB1, C_RB1, C_RB1, C_RB3, C_RB3, C_RB3, C_RB5, C_RB5, C_RB5, C_RB7, C_RB7, C_RB7,  //3
+	  C_RB1, C_RB1, C_RB1, C_RB3, C_RB3, C_RB3, C_RB5, C_RB5, C_RB5, C_RB7, C_RB7, C_RB7 };//4
 
-  for (int i = 0; i < GRID_COUNT; i++)
-  {
-  	HSV color_hsv = { C_BLK };
+HSV get_key_press_color(uint8_t i, HSV color_hsv) {
+    if (ksp[i]) {
+        // flash randomly for the pressed key
+        color_hsv.h = rand() % 256;
+        color_hsv.s = 0xFF;
+        color_hsv.v = 0xFF;
+    }
+    return color_hsv;
+}
 
-    if (shifted)
-    {
-        if (layer == BASE)
-        {
-            if (sft_down)
-            {
+HSV get_layer_color(uint8_t layer, uint8_t i) {
+    HSV color_hsv = {C_BLK};
+
+    bool shifted = ((layer == BASE) && (sft_down || caps_lck)) || (layer == NPAD && nums_lck);
+
+    if (shifted) {
+        if (layer == BASE) {
+            if (sft_down) {
                 color_hsv.h = lc_base_shft[li[i] * 3];
                 color_hsv.s = lc_base_shft[li[i] * 3 + 1];
                 color_hsv.v = lc_base_shft[li[i] * 3 + 2];
-            }
-            else if (caps_lck)
-            {
+            } else if (caps_lck) {
                 color_hsv.h = lc_base_caps[li[i] * 3];
                 color_hsv.s = lc_base_caps[li[i] * 3 + 1];
                 color_hsv.v = lc_base_caps[li[i] * 3 + 2];
             }
-        }
-        else if (layer == NUMB)
-        {
-            if (sft_down)
-            {
-                color_hsv.h = lc_numb_shft[li[i] * 3];
-                color_hsv.s = lc_numb_shft[li[i] * 3 + 1];
-                color_hsv.v = lc_numb_shft[li[i] * 3 + 2];
-            }
-        }
-        else if (layer == NPAD)
-        {
-            if (nums_lck)
-            {
+        } else if (layer == NPAD) {
+            if (nums_lck) {
                 color_hsv.h = lc_npad_lock[li[i] * 3];
                 color_hsv.s = lc_npad_lock[li[i] * 3 + 1];
                 color_hsv.v = lc_npad_lock[li[i] * 3 + 2];
             }
         }
-    }
-    else
-  	{
-  		color_hsv.h = layercolors[layer][li[i]*3];
-  		color_hsv.s = layercolors[layer][li[i]*3+1];
-  		color_hsv.v = layercolors[layer][li[i]*3+2];
-  	}
-  	
-    if (layer == NPAD &&
-        (i == idx_caps ||
-         i == idx_nums ||
-         i == idx_scrl))
-    {
-        //lock status
-        uint16_t temp = layercolors[layer][li[i]*3];
-        temp = (temp + 0x7F) % 256;
-        if (caps_lck && i == idx_caps)
-            color_hsv.h = temp;
-        if (nums_lck && i == idx_nums)
-            color_hsv.h = temp;
-        if (scrl_lck && i == idx_scrl)
-            color_hsv.h = temp;
+    } else {
+        color_hsv.h = layercolors[layer][li[i] * 3];
+        color_hsv.s = layercolors[layer][li[i] * 3 + 1];
+        color_hsv.v = layercolors[layer][li[i] * 3 + 2];
     }
 
-    if (layer == SYSC &&
-        i == idx_nkro)
-    {
-        if (nk_rover)
-        {
-            uint16_t temp = layercolors[layer][li[i]*3];
-            temp = (temp + 0x7F) % 256;
-            color_hsv.h = temp;
+    if (layer == NPAD && (i == idx_caps || i == idx_nums || i == idx_scrl)) {
+        // lock status
+        uint16_t temp = layercolors[layer][li[i] * 3];
+        temp          = (temp + 0x7F) % 256;
+        if (caps_lck && i == idx_caps) color_hsv.h = temp;
+        if (nums_lck && i == idx_nums) color_hsv.h = temp;
+        if (scrl_lck && i == idx_scrl) color_hsv.h = temp;
+    }
+
+    if (layer == SYSC && i == idx_nkro) {
+        if (nk_rover) {
+            uint16_t temp = layercolors[layer][li[i] * 3];
+            temp          = (temp + 0x7F) % 256;
+            color_hsv.h   = temp;
         }
     }
 
-    if (ksp[i])
-    {
-        //flash randomly for the pressed key
-        color_hsv.h = rand() % 256;
-        color_hsv.s = 0xFF;
-        color_hsv.v = 0xFF;
+    return color_hsv;
+}
+
+HSV get_time_color(uint8_t i) {
+    HSV color_hsv = {C_BLK};
+    if (time_disp[i]) {
+        color_hsv.h = timecolors[li[i] * 3];
+        color_hsv.s = timecolors[li[i] * 3 + 1];
+        color_hsv.v = timecolors[li[i] * 3 + 2];
     }
-  	
-  	uint16_t hue2 = hue + color_hsv.h;
-  	hue2 = hue2 > 255 ? hue2 - 256 : hue2;
-  	color_hsv.h = (uint8_t)(hue2);
-  	color_hsv.s = sat;
-  	uint8_t time2 = hue2 < 64 || hue2 > 190 ? time / 2 : time;
-  	uint8_t val2 = val > time2 ? val - time2 : 0;
-  	color_hsv.v = color_hsv.v == 0 ? 0 : val2;
-  	RGB color = hsv_to_rgb(color_hsv);
-    rgb_matrix_set_color( i, color.r, color.g, color.b );
-  }
+
+    return color_hsv;
+}
+
+void set_my_color(void) {
+    uint8_t layer  = biton32(layer_state);
+    uint8_t val    = rgb_matrix_config.hsv.v;
+    uint8_t hue    = (uint16_t)(rgb_matrix_config.hsv.h);
+    uint8_t sat    = rgb_matrix_config.hsv.s;
+    uint8_t time   = scale16by8(g_rgb_timer, my_speed);
+    float   offset = time < 128 ? time : 255 - time;
+    ;
+    offset *= 0.25f;
+    time = (uint8_t)(offset);
+    HSV color_hsv;
+
+    for (int i = 0; i < GRID_COUNT; i++) {
+        switch (disp_mode) {
+            case DM_LAYER:
+                color_hsv = get_layer_color(layer, i);
+                break;
+            case DM_TIME:
+                color_hsv = get_time_color(i);
+                break;
+        }
+
+        color_hsv = get_key_press_color(i, color_hsv);
+
+        uint16_t hue2 = hue + color_hsv.h;
+        hue2          = hue2 > 255 ? hue2 - 256 : hue2;
+        color_hsv.h   = (uint8_t)(hue2);
+        color_hsv.s   = sat;
+        uint8_t time2 = hue2 < 64 || hue2 > 190 ? time / 2 : time;
+        uint8_t val2  = val > time2 ? val - time2 : 0;
+        color_hsv.v   = color_hsv.v == 0 ? 0 : val2;
+        RGB color     = hsv_to_rgb(color_hsv);
+        rgb_matrix_set_color(i, color.r, color.g, color.b);
+    }
+}
+
+void set_disp_time_char(char c, uint8_t x0) {
+    if (c < '0' || c > '9') return;
+
+    uint8_t digit = c - '0';
+    for (uint8_t y = 0; y < TYPE_ROW; ++y) {
+        for (uint8_t x = 0; x < TYPE_COL; ++x) {
+            bool led_on                      = type_num[digit][y] & (1 << (2 - x));
+            time_disp[y * DISP_COL + x + x0] = led_on;
+        }
+    }
+}
+
+void set_disp_time(void) {
+    char time_buffer[5] = {'2', '2', '2', '2'}; // hhmm0
+
+    // if (!serial_recv(time_buffer, sizeof(time_buffer)))
+    //     return;
+
+    for (uint8_t i = 0; i < GRID_COUNT; ++i)
+        time_disp[i] = false;
+    for (uint8_t i = 0; i < 4; ++i)
+        set_disp_time_char(time_buffer[i], time_x_pos[i]);
 }
 
 bool rgb_matrix_indicators_user(void) {
-  my_speed = rgb_matrix_config.speed;
-  if (my_speed > 0) my_speed += my_speed * g_last_hit_tracker.count;
-  if (my_speed > 255) my_speed = 255;
-  uint32_t mode = rgblight_get_mode();
-  // assign colors if the matrix is on and the current mode
-  // is SOLID COLORS => No animations running
-  if(rgb_matrix_config.enable == 1 && mode == 1) {
-    uint8_t layer = biton32(layer_state);
-    set_layer_color(layer);
-  }
-  return true;
+    my_speed = rgb_matrix_config.speed;
+    if (my_speed > 0) my_speed += my_speed * g_last_hit_tracker.count;
+    if (my_speed > 255) my_speed = 255;
+    uint32_t mode = rgblight_get_mode();
+    // assign colors if the matrix is on and the current mode
+    // is SOLID COLORS => No animations running
+    if (rgb_matrix_config.enable == 1 && mode == 1) {
+        set_my_color();
+    }
+    return true;
 }
 
 void matrix_scan_user(void) {
-    //get nk rollover status
+    // get nk rollover status
     nk_rover = keymap_config.nkro;
 
-    //get shift status
+    // get shift status
     if (get_mods() & MOD_MASK_SHIFT)
         sft_down = true;
     else
         sft_down = false;
 
-    //get key press
+    // get key press
     for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
         for (uint8_t col = 0; col < MATRIX_COLS; col++) {
             uint16_t i = row * MATRIX_COLS + col;
@@ -346,6 +385,9 @@ void matrix_scan_user(void) {
             }
         }
     }
+
+    // get time from usb
+    if (disp_mode == DM_TIME) set_disp_time();
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -392,6 +434,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 break;
             case MM25://open link in new tab
                 SEND_STRING(SS_LCTL(SS_TAP(X_BTN1)));
+                break;
+
+            // display modes
+            case DK_LAYER: // set mode to layer
+                disp_mode = DM_LAYER;
+                break;
+            case DK_TIME: // toggle time
+                disp_mode = disp_mode == DM_TIME ? DM_LAYER : DM_TIME;
                 break;
         }
     }
