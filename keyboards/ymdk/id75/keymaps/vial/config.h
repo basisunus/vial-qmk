@@ -11,3 +11,4 @@
 #define VIAL_COMBO_ENTRIES 32               // number of combos used, each entry take 10 byte in EEPROM
 #define VIAL_TAP_DANCE_ENTRIES 48           // number of tap dances used, each entry take 10 byte in EEPROM
 #define VIAL_KEY_OVERRIDE_ENTRIES 8         // number of key override used, each entry take 10 byte in EEPROM
+
