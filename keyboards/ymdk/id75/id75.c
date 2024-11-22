@@ -415,7 +415,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 SEND_STRING(SS_LSFT(SS_TAP(X_F5)));
                 break;
             case MM4://close
-                SEND_STRING(SS_LALT(SS_TAP(X_F4)));
+                SEND_STRING(SS_TAP(X_BTN1) SS_DELAY(100) SS_LALT(SS_TAP(X_F4)));
                 break;
             case MM5://step over
                 SEND_STRING(SS_TAP(X_F10));
