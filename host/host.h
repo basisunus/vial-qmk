@@ -1,12 +1,4 @@
-/////////////////////////////////////////////////////////////////////////////
-// Name:        tbtest.h
-// Purpose:     wxTaskBarIcon sample
-// Author:      Julian Smart
-// Modified by:
-// Created:     01/02/97
-// Copyright:   (c)
-// Licence:     wxWindows licence
-/////////////////////////////////////////////////////////////////////////////
+#include "wx/wx.h"
 
 class MyTaskBarIcon : public wxTaskBarIcon
 {
