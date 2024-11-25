@@ -1,46 +1,75 @@
 #include "wx/artprov.h"
 #include "wx/taskbar.h"
 #include "host.h"
+#include "images.h"
+#include <hidapi.h>
 
 // ----------------------------------------------------------------------------
 // global variables
 // ----------------------------------------------------------------------------
 
-static MyDialog* gs_dialog = NULL;
+static HostDlg* gs_dialog = NULL;
 
 // ============================================================================
 // implementation
 // ============================================================================
 
 // ----------------------------------------------------------------------------
-// MyApp
+// HostApp
 // ----------------------------------------------------------------------------
 
-wxIMPLEMENT_APP(MyApp);
+wxIMPLEMENT_APP(HostApp);
 
-bool MyApp::OnInit() {
-    if (!wxApp::OnInit()) return false;
+bool HostApp::OnInit()
+{
+    m_checker = new wxSingleInstanceChecker("MyApp");
+    if (m_checker->IsAnotherRunning())
+    {
+        wxLogError("Another instance of the application is already running.");
+        delete m_checker;
+        return false;
+    }
+    if (!wxApp::OnInit())
+        return false;
 
-    if (!wxTaskBarIcon::IsAvailable()) {
-        wxMessageBox("There appears to be no system tray support in your current environment. This sample may not behave as expected.", "Warning", wxOK | wxICON_EXCLAMATION);
+	//add png handler
+	wxImage::AddHandler(new wxPNGHandler);
+
+    if (!wxTaskBarIcon::IsAvailable())
+    {
+        wxMessageBox("There appears to be no system tray support in your current environment. This sample may not behave as expected.",
+            "Warning", wxOK | wxICON_EXCLAMATION);
     }
 
     // Create the main window
-    gs_dialog = new MyDialog("wxTaskBarIcon Test Dialog");
+    gs_dialog = new HostDlg("Host");
 
-    gs_dialog->Show(true);
+    //gs_dialog->Show(true);
 
     return true;
 }
 
+int HostApp::OnExit()
+{
+    if (m_checker)
+        delete m_checker;
+    return 0;
+}
+
 // ----------------------------------------------------------------------------
-// MyDialog implementation
+// HostDlg implementation
 // ----------------------------------------------------------------------------
 
-wxBEGIN_EVENT_TABLE(MyDialog, wxDialog) EVT_BUTTON(wxID_ABOUT, MyDialog::OnAbout) EVT_BUTTON(wxID_OK, MyDialog::OnOK) EVT_BUTTON(wxID_EXIT, MyDialog::OnExit) EVT_CLOSE(MyDialog::OnCloseWindow) wxEND_EVENT_TABLE()
+wxBEGIN_EVENT_TABLE(HostDlg, wxDialog)
+EVT_BUTTON(wxID_ABOUT, HostDlg::OnAbout)
+EVT_BUTTON(wxID_OK, HostDlg::OnOK)
+EVT_BUTTON(wxID_EXIT, HostDlg::OnExit)
+EVT_CLOSE(HostDlg::OnCloseWindow)
+wxEND_EVENT_TABLE()
 
-    MyDialog::MyDialog(const wxString& title)
-    : wxDialog(NULL, wxID_ANY, title) {
+HostDlg::HostDlg(const wxString& title)
+: wxDialog(NULL, wxID_ANY, title)
+{
     wxSizer* const sizerTop = new wxBoxSizer(wxVERTICAL);
 
     wxSizerFlags flags;
@@ -61,81 +90,73 @@ wxBEGIN_EVENT_TABLE(MyDialog, wxDialog) EVT_BUTTON(wxID_ABOUT, MyDialog::OnAbout
     SetSizerAndFit(sizerTop);
     Centre();
 
-    m_taskBarIcon = new MyTaskBarIcon();
+    m_taskBarIcon = new HostTrayIcon();
 
     // we should be able to show up to 128 characters on Windows
-    if (!m_taskBarIcon->SetIcon(wxArtProvider::GetBitmapBundle(wxART_WX_LOGO, wxART_OTHER, wxSize(32, 32)), "wxTaskBarIcon Sample\n"
-                                                                                                            "With a very, very, very, very\n"
-                                                                                                            "long tooltip whose length is\n"
-                                                                                                            "greater than 64 characters.")) {
+    wxIcon icon;
+    icon.CopyFromBitmap(wxGetBitmapFromMemory(squares));
+    if (!m_taskBarIcon->SetIcon(icon, "Host"))
+    {
         wxLogError("Could not set icon.");
     }
-
-#if defined(__WXOSX__) && wxOSX_USE_COCOA
-    m_dockIcon = new MyTaskBarIcon(wxTBI_DOCK);
-    if (!m_dockIcon->SetIcon(wxArtProvider::GetBitmapBundle(wxART_WX_LOGO, wxART_OTHER, wxSize(32, 32)))) {
-        wxLogError("Could not set icon.");
-    }
-#endif
 }
 
-MyDialog::~MyDialog() {
+HostDlg::~HostDlg() {
     delete m_taskBarIcon;
 }
 
-void MyDialog::OnAbout(wxCommandEvent& WXUNUSED(event)) {
-    static const char* const title   = "About wxWidgets Taskbar Sample";
-    static const char* const message = "wxWidgets sample showing wxTaskBarIcon class\n"
-                                       "\n"
-                                       "(C) 1997 Julian Smart\n"
-                                       "(C) 2007 Vadim Zeitlin";
-
-#if defined(__WXMSW__) && wxUSE_TASKBARICON_BALLOONS
-    m_taskBarIcon->ShowBalloon(title, message, 15000, wxICON_INFORMATION, wxBitmapBundle::FromSVGFile("info.svg", wxSize(64, 64)));
-#else  // !__WXMSW__
-    wxMessageBox(message, title, wxICON_INFORMATION | wxOK, this);
-#endif // __WXMSW__/!__WXMSW__
+void HostDlg::OnAbout(wxCommandEvent& WXUNUSED(event))
+{
 }
 
-void MyDialog::OnOK(wxCommandEvent& WXUNUSED(event)) {
+void HostDlg::OnOK(wxCommandEvent& WXUNUSED(event)) {
     Show(false);
 }
 
-void MyDialog::OnExit(wxCommandEvent& WXUNUSED(event)) {
+void HostDlg::OnExit(wxCommandEvent& WXUNUSED(event)) {
     Close(true);
 }
 
-void MyDialog::OnCloseWindow(wxCloseEvent& WXUNUSED(event)) {
+void HostDlg::OnCloseWindow(wxCloseEvent& WXUNUSED(event)) {
     Destroy();
 }
 
 // ----------------------------------------------------------------------------
-// MyTaskBarIcon implementation
+// HostTrayIcon implementation
 // ----------------------------------------------------------------------------
 
 enum { PU_RESTORE = 10001, PU_NEW_ICON, PU_EXIT, PU_CHECKMARK, PU_SUB1, PU_SUB2, PU_SUBMAIN };
 
-wxBEGIN_EVENT_TABLE(MyTaskBarIcon, wxTaskBarIcon) EVT_MENU(PU_RESTORE, MyTaskBarIcon::OnMenuRestore) EVT_MENU(PU_EXIT, MyTaskBarIcon::OnMenuExit) EVT_MENU(PU_NEW_ICON, MyTaskBarIcon::OnMenuSetNewIcon) EVT_MENU(PU_CHECKMARK, MyTaskBarIcon::OnMenuCheckmark) EVT_UPDATE_UI(PU_CHECKMARK, MyTaskBarIcon::OnMenuUICheckmark) EVT_TASKBAR_LEFT_DCLICK(MyTaskBarIcon::OnLeftButtonDClick) EVT_MENU(PU_SUB1, MyTaskBarIcon::OnMenuSub) EVT_MENU(PU_SUB2, MyTaskBarIcon::OnMenuSub) wxEND_EVENT_TABLE()
+wxBEGIN_EVENT_TABLE(HostTrayIcon, wxTaskBarIcon)
+EVT_MENU(PU_RESTORE, HostTrayIcon::OnMenuRestore)
+EVT_MENU(PU_EXIT, HostTrayIcon::OnMenuExit)
+EVT_MENU(PU_NEW_ICON, HostTrayIcon::OnMenuSetNewIcon)
+EVT_MENU(PU_CHECKMARK, HostTrayIcon::OnMenuCheckmark)
+EVT_UPDATE_UI(PU_CHECKMARK, HostTrayIcon::OnMenuUICheckmark)
+EVT_TASKBAR_LEFT_DCLICK(HostTrayIcon::OnLeftButtonDClick)
+EVT_MENU(PU_SUB1, HostTrayIcon::OnMenuSub)
+EVT_MENU(PU_SUB2, HostTrayIcon::OnMenuSub)
+wxEND_EVENT_TABLE()
 
-    void MyTaskBarIcon::OnMenuRestore(wxCommandEvent&) {
+void HostTrayIcon::OnMenuRestore(wxCommandEvent&) {
     gs_dialog->Show(true);
 }
 
-void MyTaskBarIcon::OnMenuExit(wxCommandEvent&) {
+void HostTrayIcon::OnMenuExit(wxCommandEvent&) {
     gs_dialog->Close(true);
 }
 
 static bool check = true;
 
-void MyTaskBarIcon::OnMenuCheckmark(wxCommandEvent&) {
+void HostTrayIcon::OnMenuCheckmark(wxCommandEvent&) {
     check = !check;
 }
 
-void MyTaskBarIcon::OnMenuUICheckmark(wxUpdateUIEvent& event) {
+void HostTrayIcon::OnMenuUICheckmark(wxUpdateUIEvent& event) {
     event.Check(check);
 }
 
-void MyTaskBarIcon::OnMenuSetNewIcon(wxCommandEvent&) {
+void HostTrayIcon::OnMenuSetNewIcon(wxCommandEvent&) {
     // wxIcon icon(smile_xpm);
 
     // if (!SetIcon(wxBitmapBundle::FromBitmaps(
@@ -146,12 +167,12 @@ void MyTaskBarIcon::OnMenuSetNewIcon(wxCommandEvent&) {
     //     wxMessageBox("Could not set new icon.");
 }
 
-void MyTaskBarIcon::OnMenuSub(wxCommandEvent&) {
+void HostTrayIcon::OnMenuSub(wxCommandEvent&) {
     wxMessageBox("You clicked on a submenu!");
 }
 
 // Overridables
-wxMenu* MyTaskBarIcon::CreatePopupMenu() {
+wxMenu* HostTrayIcon::CreatePopupMenu() {
     wxMenu* menu = new wxMenu;
     menu->Append(PU_RESTORE, "&Restore main window");
     menu->AppendSeparator();
@@ -175,6 +196,6 @@ wxMenu* MyTaskBarIcon::CreatePopupMenu() {
     return menu;
 }
 
-void MyTaskBarIcon::OnLeftButtonDClick(wxTaskBarIconEvent&) {
+void HostTrayIcon::OnLeftButtonDClick(wxTaskBarIconEvent&) {
     gs_dialog->Show(true);
 }

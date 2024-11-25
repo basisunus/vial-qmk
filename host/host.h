@@ -1,13 +1,15 @@
 #include "wx/wx.h"
+#include <wx/mstream.h>
+#include <wx/snglinst.h>
 
-class MyTaskBarIcon : public wxTaskBarIcon
+class HostTrayIcon : public wxTaskBarIcon
 {
 public:
 #if defined(__WXOSX__) && wxOSX_USE_COCOA
-    MyTaskBarIcon(wxTaskBarIconType iconType = wxTBI_DEFAULT_TYPE)
+    HostTrayIcon(wxTaskBarIconType iconType = wxTBI_DEFAULT_TYPE)
     :   wxTaskBarIcon(iconType)
 #else
-    MyTaskBarIcon()
+    HostTrayIcon()
 #endif
     {}
 
@@ -25,17 +27,19 @@ public:
 
 
 // Define a new application
-class MyApp : public wxApp
+class HostApp : public wxApp
 {
 public:
+    wxSingleInstanceChecker *m_checker;
     virtual bool OnInit() wxOVERRIDE;
+    virtual int OnExit() wxOVERRIDE;
 };
 
-class MyDialog: public wxDialog
+class HostDlg: public wxDialog
 {
 public:
-    MyDialog(const wxString& title);
-    virtual ~MyDialog();
+    HostDlg(const wxString& title);
+    virtual ~HostDlg();
 
 protected:
     void OnAbout(wxCommandEvent& event);
@@ -43,10 +47,21 @@ protected:
     void OnExit(wxCommandEvent& event);
     void OnCloseWindow(wxCloseEvent& event);
 
-    MyTaskBarIcon   *m_taskBarIcon;
+    HostTrayIcon   *m_taskBarIcon;
 #if defined(__WXOSX__) && wxOSX_USE_COCOA
-    MyTaskBarIcon   *m_dockIcon;
+    HostTrayIcon   *m_dockIcon;
 #endif
 
     wxDECLARE_EVENT_TABLE();
 };
+
+#define wxGetBitmapFromMemory(name) _wxGetBitmapFromMemory(name ## _png, sizeof(name ## _png))
+
+inline wxBitmap _wxGetBitmapFromMemory(const unsigned char *data, int length)
+{
+	wxLogNull logNo;
+	wxMemoryInputStream is(data, length);
+    wxImage image(is, wxBITMAP_TYPE_PNG);
+	return wxBitmap(image);
+}
+
