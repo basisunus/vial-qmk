@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <chrono>
+#include <thread>
 #include <hidapi.h>
 
 enum kb_mode
@@ -13,18 +15,25 @@ enum kb_mode
     KB_TIME
 };
 
+//command id for hid
+enum commands
+{
+    ID_QUERY_MODE = 0x30,   //send
+    ID_REPORT_MODE,         //receive
+    ID_UPDATE_TIME          //send
+};
+
 struct Keyboard
 {
     uint16_t vendor_id;
     uint16_t product_id;
     hid_device *hd;
     kb_mode mode;
-    wxTimer* timer;
 };
 
 static std::vector<Keyboard> supported_keyboards = {
-    {0x8065, 0x8048, 0, KB_NONE, 0}, // pabile p48
-    {0x594D, 0x0075, 0, KB_NONE, 0}  // ymdk id75
+    {0x8065, 0x8048, 0, KB_NONE}, // pabile p48
+    {0x594D, 0x0075, 0, KB_NONE}  // ymdk id75
 };
 
 class HostTrayIcon : public wxTaskBarIcon
@@ -76,12 +85,8 @@ private:
     {
         for (auto& kb : m_keyboards)
         {
+            kb.second.mode = KB_NONE;
             hid_close(kb.second.hd);
-            if (kb.second.timer)
-            {
-                kb.second.timer->Stop();
-                delete kb.second.timer;
-            }
         }
         m_keyboards.clear();
     }
@@ -97,6 +102,58 @@ private:
             }
         }
         return false;
+    }
+
+    void query_mode(Keyboard* kb)
+    {
+        uint8_t query[32] = {ID_QUERY_MODE};//command to query mode
+        uint8_t resps[32] = {0};
+
+        hid_write(kb->hd, query, sizeof(query));
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        hid_read(kb->hd, resps, sizeof(resps));
+
+        if (resps[0] == ID_REPORT_MODE)
+        {
+            kb->mode = (kb_mode)(resps[1]);
+        }
+    }
+
+    void keyboard_loop(Keyboard* kb)
+    {
+        if (!kb) return;
+        while (true)
+        {
+            //update mode
+            //query_mode(kb);
+
+            //if (kb->mode == KB_NONE) return;
+            //
+            //switch (kb->mode)
+            //{
+                //case KB_TIME:
+                    //{
+                        auto now = std::chrono::system_clock::now();
+                        std::time_t now_c = std::chrono::system_clock::to_time_t(now);
+                        std::tm *now_tm = std::localtime(&now_c);
+
+                        uint8_t buffer[32] = {0};
+                        buffer[0] = ID_UPDATE_TIME;
+                        buffer[1] = static_cast<uint8_t>(now_tm->tm_hour / 10) + '0';
+                        buffer[2] = static_cast<uint8_t>(now_tm->tm_hour % 10) + '0';
+                        buffer[3] = static_cast<uint8_t>(now_tm->tm_min / 10) + '0';
+                        buffer[4] = static_cast<uint8_t>(now_tm->tm_min % 10) + '0';
+                        buffer[5] = static_cast<uint8_t>(now_tm->tm_sec / 10) + '0';
+                        buffer[6] = static_cast<uint8_t>(now_tm->tm_sec % 10) + '0';
+
+                        int result = hid_write(kb->hd, buffer, 6);
+                    //}
+                    //break;
+            //}
+
+            //
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        }
     }
 
 protected:

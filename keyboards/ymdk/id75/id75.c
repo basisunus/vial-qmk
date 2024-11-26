@@ -458,11 +458,44 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 void raw_hid_receive_kb(uint8_t *data, uint8_t length) {
+    //uint8_t *command_id   = &(data[0]);
+    //uint8_t *command_data = &(data[1]);
+
+    //switch (*command_id)
+    //{
+    //    case ID_QUERY_MODE:
+    //        {
+    //            uint8_t buffer[32] = {0};
+    //            buffer[0] = ID_REPORT_MODE;
+    //            buffer[1] = disp_mode;
+    //            raw_hid_send(buffer, sizeof(buffer));
+    //        }
+    //        break;
+    //    case ID_UPDATE_TIME:
+    //        {
+    //            uint8_t ls = sizeof(time_buffer);
+    //            ls = length < ls ? length : ls;
+    //            for (uint8_t i = 0; i < ls; i++) {
+    //                time_buffer[i] = command_data[i];
+    //            }
+    //        }
+    //        break;
+    //    default:
+    //        {
+    //            uint8_t buffer[32];
+    //            for (uint8_t i = 0; i < 32; i++)
+    //                buffer[i] = 100;
+    //            raw_hid_send(buffer, sizeof(buffer));
+    //        }
+    //        break;
+    //}
+
     uint8_t ls = sizeof(time_buffer);
     ls = length < ls ? length : ls;
     for (uint8_t i = 0; i < ls; i++) {
         time_buffer[i] = data[i];
     }
+
 }
 
 //#endif

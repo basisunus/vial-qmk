@@ -148,10 +148,12 @@ void HostDlg::OnDevEnum(wxTimerEvent& event)
                         cur_dev->vendor_id,
                         cur_dev->product_id,
                         handle,
-                        KB_NONE,
-                        0
+                        KB_NONE
                     };
-                    m_keyboards.insert(std::pair<std::string, Keyboard>(key, kb));
+                    m_keyboards[key] = kb;
+                    //start loop
+                    //std::thread(&HostDlg::keyboard_loop, this, &(m_keyboards[key])).detach();
+                    keyboard_loop(&(m_keyboards[key]));
                 }
             }
         }
@@ -165,6 +167,7 @@ void HostDlg::OnDevEnum(wxTimerEvent& event)
         if (current_devices.find(it->first) == current_devices.end())
         {
             hid_close(it->second.hd);
+            it->second.mode = KB_NONE;
             it = m_keyboards.erase(it);
         }
         else
