@@ -1,4 +1,4 @@
-# Quantum Mechanical Keyboard Firmware for Ortholinear Keyboards Using as Pixel Displays
+# Quantum Mechanical Keyboard Firmware for Ortholinear Keyboards Used as Pixel Displays
 
 Currently supported keyboards (also those I own)
 Pabile P48
