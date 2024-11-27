@@ -71,9 +71,20 @@ enum custom_keycodes {
 
 // display modes
 enum disp_modes {
-    DM_LAYER = 0, // display color depending on key function
-    DM_TIME       // display current time from host
+    DM_NONE  = 0,
+    DM_LAYER,       // display color depending on key function
+    DM_TIME         // display current time from host
 };
 
 // keycodes for display modes
-enum disp_keycodes { DK_LAYER = SAFE_RANGE, DK_TIME };
+enum disp_keycodes {
+    DK_LAYER = SAFE_RANGE,
+    DK_TIME
+};
+
+// command id for hid
+enum commands {
+    ID_QUERY_MODE = 0x30, // receive
+    ID_REPORT_MODE,       // send
+    ID_UPDATE_TIME        // receive
+};

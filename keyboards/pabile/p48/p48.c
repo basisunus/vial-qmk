@@ -456,10 +456,30 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 void raw_hid_receive_kb(uint8_t *data, uint8_t length) {
-    uint8_t ls = sizeof(time_buffer);
-    ls = length < ls ? length : ls;
-    for (uint8_t i = 0; i < ls; i++) {
-        time_buffer[i] = data[i];
+    uint8_t *cid = &(data[0]);
+    uint8_t *cdata = &(data[1]);
+    uint8_t  buffer[32] = {0};
+
+    switch (*cid)
+    {
+        case ID_QUERY_MODE:
+            buffer[0] = ID_REPORT_MODE;
+            buffer[1] = disp_mode;
+            raw_hid_send(buffer, sizeof(buffer));
+            break;
+        case ID_UPDATE_TIME:
+            {
+                uint8_t ls = sizeof(time_buffer);
+                ls = length < ls ? length : ls;
+                for (uint8_t i = 0; i < ls; i++) {
+                    time_buffer[i] = cdata[i];
+                }
+            }
+            break;
+        default://debug
+            memset(buffer, 255, sizeof(buffer));
+            raw_hid_send(buffer, sizeof(buffer));
+            break;
     }
 }
 

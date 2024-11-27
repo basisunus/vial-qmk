@@ -148,12 +148,11 @@ void HostDlg::OnDevEnum(wxTimerEvent& event)
                         cur_dev->vendor_id,
                         cur_dev->product_id,
                         handle,
-                        KB_NONE
+                        KB_LAYER
                     };
                     m_keyboards[key] = kb;
                     //start loop
-                    //std::thread(&HostDlg::keyboard_loop, this, &(m_keyboards[key])).detach();
-                    keyboard_loop(&(m_keyboards[key]));
+                    std::thread(&HostDlg::keyboard_loop, this, &(m_keyboards[key])).detach();
                 }
             }
         }
@@ -168,13 +167,62 @@ void HostDlg::OnDevEnum(wxTimerEvent& event)
         {
             hid_close(it->second.hd);
             it->second.mode = KB_NONE;
+            std::this_thread::sleep_for(std::chrono::seconds(1));
             it = m_keyboards.erase(it);
         }
         else
             ++it;
     }
 }
-    // ----------------------------------------------------------------------------
+
+void HostDlg::query_mode(Keyboard* kb) {
+    uint8_t query[32] = {0}; // command to query mode
+    uint8_t resps[32] = {0};
+
+    query[0] = ID_QUERY_MODE;
+    query[1] = ID_QUERY_MODE;
+    hid_write(kb->hd, query, sizeof(query));
+    hid_read_timeout(kb->hd, resps, sizeof(resps), 500);
+
+    if (resps[0] == ID_REPORT_MODE) {
+        kb->mode = (kb_mode)(resps[1]);
+    }
+}
+
+void HostDlg::keyboard_loop(Keyboard* kb) {
+    if (!kb) return;
+    while (true) {
+        if (kb->mode == KB_NONE) return;
+
+        // update mode
+        query_mode(kb);
+
+        switch (kb->mode) {
+            case KB_TIME: {
+                auto        now    = std::chrono::system_clock::now();
+                std::time_t now_c  = std::chrono::system_clock::to_time_t(now);
+                std::tm*    now_tm = std::localtime(&now_c);
+
+                uint8_t buffer[32] = {0};
+                buffer[0]          = ID_UPDATE_TIME;
+                buffer[1]          = ID_UPDATE_TIME;
+                buffer[2]          = static_cast<uint8_t>(now_tm->tm_hour / 10) + '0';
+                buffer[3]          = static_cast<uint8_t>(now_tm->tm_hour % 10) + '0';
+                buffer[4]          = static_cast<uint8_t>(now_tm->tm_min / 10) + '0';
+                buffer[5]          = static_cast<uint8_t>(now_tm->tm_min % 10) + '0';
+                // buffer[5]          = static_cast<uint8_t>(now_tm->tm_sec / 10) + '0';
+                // buffer[6]          = static_cast<uint8_t>(now_tm->tm_sec % 10) + '0';
+
+                int result = hid_write(kb->hd, buffer, sizeof(buffer));
+            } break;
+        }
+
+        //
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
+}
+
+// ----------------------------------------------------------------------------
 // HostTrayIcon implementation
 // ----------------------------------------------------------------------------
 
