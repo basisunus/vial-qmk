@@ -99,7 +99,7 @@ HostDlg::HostDlg(const wxString& title)
     //timer for device enumeration
     m_dev_enum = new wxTimer(this);
     Bind(wxEVT_TIMER, &HostDlg::OnDevEnum, this);
-    m_dev_enum->Start(5000);    //check every 5 seconds
+    m_dev_enum->Start(500);    //check every 0.5 seconds
 }
 
 HostDlg::~HostDlg() {
@@ -185,7 +185,15 @@ void HostDlg::query_mode(Keyboard* kb) {
     hid_read_timeout(kb->hd, resps, sizeof(resps), 500);
 
     if (resps[0] == ID_REPORT_MODE) {
-        kb->mode = (kb_mode)(resps[1]);
+        uint8_t mode = resps[1];
+        switch (mode)
+        {
+            case KB_STOPW:
+                if (kb->mode != KB_STOPW)
+                    m_sw_start = std::chrono::steady_clock::now();
+                break;
+        }
+        kb->mode = (kb_mode)(mode);
     }
 }
 
@@ -210,15 +218,29 @@ void HostDlg::keyboard_loop(Keyboard* kb) {
                 buffer[3]          = static_cast<uint8_t>(now_tm->tm_hour % 10) + '0';
                 buffer[4]          = static_cast<uint8_t>(now_tm->tm_min / 10) + '0';
                 buffer[5]          = static_cast<uint8_t>(now_tm->tm_min % 10) + '0';
-                // buffer[5]          = static_cast<uint8_t>(now_tm->tm_sec / 10) + '0';
-                // buffer[6]          = static_cast<uint8_t>(now_tm->tm_sec % 10) + '0';
 
-                int result = hid_write(kb->hd, buffer, sizeof(buffer));
+                hid_write(kb->hd, buffer, sizeof(buffer));
+            } break;
+            case KB_STOPW: {
+                auto sw_cur = std::chrono::steady_clock::now();
+                auto sw_duration = std::chrono::duration_cast<std::chrono::seconds>(sw_cur - m_sw_start).count();
+                int  minutes     = sw_duration / 60;
+                int  seconds     = sw_duration % 60;
+
+                uint8_t buffer[32] = {0};
+                buffer[0]          = ID_UPDATE_TIME;
+                buffer[1]          = ID_UPDATE_TIME;
+                buffer[2]          = static_cast<uint8_t>(minutes / 10) + '0';
+                buffer[3]          = static_cast<uint8_t>(minutes % 10) + '0';
+                buffer[4]          = static_cast<uint8_t>(seconds / 10) + '0';
+                buffer[5]          = static_cast<uint8_t>(seconds % 10) + '0';
+
+                hid_write(kb->hd, buffer, sizeof(buffer));
             } break;
         }
 
         //
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
 

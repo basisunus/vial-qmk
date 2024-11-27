@@ -73,13 +73,15 @@ enum custom_keycodes {
 enum disp_modes {
     DM_NONE  = 0,
     DM_LAYER,       // display color depending on key function
-    DM_TIME         // display current time from host
+    DM_TIME,         // display current time from host
+    DM_STOPW        // display time in mmss for a stopwatch
 };
 
 // keycodes for display modes
 enum disp_keycodes {
     DK_LAYER = SAFE_RANGE,
-    DK_TIME
+    DK_TIME,
+    DK_STOPW
 };
 
 // command id for hid

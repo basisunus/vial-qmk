@@ -1,17 +1,19 @@
 [Setup]
 AppName=Host
 AppVersion=1.0
-DefaultDirName={pf}\Host
+DefaultDirName={commonpf}\Host
 DefaultGroupName=Host
 OutputBaseFilename=HostSetup
 Compression=lzma
 SolidCompression=yes
+SetupIconFile=../squares.ico
+ArchitecturesInstallIn64BitMode=x64os
 
 [Files]
-Source: "Host.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "../build/Release/Host.exe"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
-Name: "{autoprograms}\MyApp"; Filename: "{app}\MyApp.exe"; Tasks: "desktopicon"
+Name: "{autoprograms}\Host"; Filename: "{app}\Host.exe"
 
 [Run]
-Filename: "reg"; Parameters: "add HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v MyApp /d ""{app}\MyApp.exe"" /f"; Flags: runhidden
+Filename: "reg"; Parameters: "add HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v Host /d ""{app}\Host.exe"" /f"; Flags: runhidden

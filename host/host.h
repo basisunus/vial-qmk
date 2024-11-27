@@ -12,7 +12,8 @@ enum kb_mode
 {
     KB_NONE = 0,
     KB_LAYER,
-    KB_TIME
+    KB_TIME,
+    KB_STOPW
 };
 
 //command id for hid
@@ -74,6 +75,7 @@ public:
 private:
     wxTimer *m_dev_enum;
     std::map<std::string, Keyboard> m_keyboards;//connected keyboards
+    std::chrono::time_point<std::chrono::steady_clock> m_sw_start;//start time by a stopwatch
 
 private:
     std::string get_key(uint16_t vendor_id, uint16_t product_id)

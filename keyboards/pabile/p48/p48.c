@@ -176,7 +176,7 @@ const uint8_t PROGMEM layercolors[LAYER_NUM][GRID_COUNT*3] =
 	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK },
     //SYSTEM
     //--1------2------3------4------5------6------7------8------9-----10-----11-----12
-    { C_RB1, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_CMD, C_CMD, C_RB1, C_CMD, C_RB1,
+    { C_RB1, C_RB2, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_CMD, C_CMD, C_RB1, C_CMD, C_RB1,
 	  C_BLK, C_RB5, C_RB5, C_RB5, C_RB5, C_RB5, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_RB4,
 	  C_LCK, C_RB4, C_RB4, C_RB4, C_RB4, C_RB4, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK,
 	  C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK, C_BLK },
@@ -319,6 +319,7 @@ void set_my_color(void) {
                 color_hsv = get_layer_color(layer, i);
                 break;
             case DM_TIME:
+            case DM_STOPW:
                 color_hsv = get_time_color(i);
                 break;
         }
@@ -394,7 +395,12 @@ void matrix_scan_user(void) {
     }
 
     // get time from usb
-    if (disp_mode == DM_TIME) set_disp_time();
+    switch (disp_mode) {
+        case DM_TIME:
+        case DM_STOPW:
+            set_disp_time();
+            break;
+    }
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -449,6 +455,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 break;
             case DK_TIME: // toggle time
                 disp_mode = disp_mode == DM_TIME ? DM_LAYER : DM_TIME;
+                break;
+            case DK_STOPW: // toggle stopwatch
+                disp_mode = disp_mode == DM_STOPW ? DM_LAYER : DM_STOPW;
                 break;
         }
     }
