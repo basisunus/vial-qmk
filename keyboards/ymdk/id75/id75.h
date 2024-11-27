@@ -48,23 +48,20 @@ enum custom_keycodes {
     MM29
 };
 
-//display modes
+// display modes
 enum disp_modes {
     DM_NONE = 0,
-    DM_LAYER,       //display color depending on key function
-    DM_TIME         //display current time from host
+    DM_LAYER, // display color depending on key function
+    DM_TIME,  // display current time from host
+    DM_STOPW  // display time in mmss for a stopwatch
 };
 
-//keycodes for display modes
-enum disp_keycodes {
-    DK_LAYER = SAFE_RANGE,
-    DK_TIME
-};
+// keycodes for display modes
+enum disp_keycodes { DK_LAYER = SAFE_RANGE, DK_TIME, DK_STOPW };
 
-//command id for hid
-enum commands
-{
-    ID_QUERY_MODE = 0x30,   //receive
-    ID_REPORT_MODE,         //send
-    ID_UPDATE_TIME          //receive
+// command id for hid
+enum commands {
+    ID_QUERY_MODE = 0x30, // receive
+    ID_REPORT_MODE,       // send
+    ID_UPDATE_TIME        // receive
 };
