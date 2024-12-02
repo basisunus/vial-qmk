@@ -447,7 +447,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 SEND_STRING(SS_TAP(X_BTN1) SS_LCTL(SS_TAP(X_V)) SS_DELAY(100) SS_TAP(X_ENTER) SS_DELAY(100) SS_TAP(X_ENTER));
                 break;
             case MM19://open link in new tab
-                SEND_STRING(SS_LCTL(SS_TAP(X_BTN1)));
+                SEND_STRING(SS_DOWN(X_LCTL) SS_DELAY(100) SS_TAP(X_BTN1) SS_DELAY(100) SS_UP(X_LCTL));
                 break;
 
             //display modes

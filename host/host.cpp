@@ -143,6 +143,8 @@ void HostDlg::OnDevEnum(wxTimerEvent& event)
                 hid_device* handle = hid_open(cur_dev->vendor_id, cur_dev->product_id, NULL);
                 if (handle)
                 {
+                    // set the device to nonblocking mode
+                    hid_set_nonblocking(handle, 0);
                     Keyboard kb =
                     {
                         cur_dev->vendor_id,
@@ -179,10 +181,14 @@ void HostDlg::query_mode(Keyboard* kb) {
     uint8_t query[32] = {0}; // command to query mode
     uint8_t resps[32] = {0};
 
+    std::wstring str;
+    int          err;
     query[0] = ID_QUERY_MODE;
     query[1] = ID_QUERY_MODE;
-    hid_write(kb->hd, query, sizeof(query));
-    hid_read_timeout(kb->hd, resps, sizeof(resps), 500);
+    err = hid_write(kb->hd, query, sizeof(query));
+    if (err == -1) str = hid_error(kb->hd);
+    err = hid_read_timeout(kb->hd, resps, sizeof(resps), -1);
+    if (err == -1) str = hid_error(kb->hd);
 
     if (resps[0] == ID_REPORT_MODE) {
         uint8_t mode = resps[1];
