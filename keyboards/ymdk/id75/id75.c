@@ -472,8 +472,9 @@ void raw_hid_receive_kb(uint8_t *data, uint8_t length) {
 
     switch (*cid) {
         case ID_QUERY_MODE:
-            buffer[0] = ID_REPORT_MODE;
-            buffer[1] = disp_mode;
+            buffer[0] = 0xFF;
+            buffer[1] = ID_REPORT_MODE;
+            buffer[2] = disp_mode;
             raw_hid_send(buffer, sizeof(buffer));
             break;
         case ID_UPDATE_TIME: {
@@ -484,8 +485,8 @@ void raw_hid_receive_kb(uint8_t *data, uint8_t length) {
             }
         } break;
         default: // debug
-            memset(buffer, 255, sizeof(buffer));
-            raw_hid_send(buffer, sizeof(buffer));
+            //memset(buffer, 255, sizeof(buffer));
+            //raw_hid_send(buffer, sizeof(buffer));
             break;
     }
 }

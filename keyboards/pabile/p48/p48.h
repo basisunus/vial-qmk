@@ -86,7 +86,7 @@ enum disp_keycodes {
 
 // command id for hid
 enum commands {
-    ID_QUERY_MODE = 0x30, // receive
+    ID_QUERY_MODE = 0xF0, // receive
     ID_REPORT_MODE,       // send
     ID_UPDATE_TIME        // receive
 };

@@ -20,7 +20,7 @@ enum kb_mode
 //command id for hid
 enum commands
 {
-    ID_QUERY_MODE = 0x30,   //send
+    ID_QUERY_MODE = 0xF0,   //send
     ID_REPORT_MODE,         //receive
     ID_UPDATE_TIME          //send
 };
@@ -81,6 +81,9 @@ private:
     std::map<std::string, Keyboard> m_keyboards;//connected keyboards
     std::chrono::time_point<std::chrono::steady_clock> m_sw_start;//start time by a stopwatch
     std::mutex m_mutex;
+    //polling intervals
+    uint16_t m_dev_int;
+    uint16_t m_time_int;
 
 private:
     std::string get_key(uint16_t vendor_id, uint16_t product_id)
@@ -123,6 +126,11 @@ protected:
     void OnOK(wxCommandEvent& event);
     void OnCloseWindow(wxCloseEvent& event);
     void OnDevEnum(wxTimerEvent &event);
+
+    void OnDevSpin(wxSpinEvent &event);
+    void OnDevSpinText(wxCommandEvent &event);
+    void OnTimeSpin(wxSpinEvent &event);
+    void OnTimeSpinText(wxCommandEvent &event);
 
     HostTrayIcon   *m_taskBarIcon;
 #if defined(__WXOSX__) && wxOSX_USE_COCOA

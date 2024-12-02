@@ -1,5 +1,6 @@
 #include "wx/artprov.h"
 #include "wx/taskbar.h"
+#include "wx/spinctrl.h"
 #include "host.h"
 #include "images.h"
 
@@ -64,8 +65,8 @@ EVT_CLOSE(HostDlg::OnCloseWindow)
 wxEND_EVENT_TABLE()
 
 HostDlg::HostDlg(const wxString& title)
-: wxDialog(NULL, wxID_ANY, title)
-{
+: wxDialog(NULL, wxID_ANY, title),
+m_dev_int(500), m_time_int(100) {
     wxSizer* const sizerTop = new wxBoxSizer(wxVERTICAL);
 
     wxSizerFlags flags;
@@ -73,9 +74,29 @@ HostDlg::HostDlg(const wxString& title)
 
     sizerTop->AddStretchSpacer()->SetMinSize(200, 50);
 
+    wxStaticText* devSt = new wxStaticText(this, 0, "Device Polling:");
+    wxSpinCtrl* devSpin = new wxSpinCtrl(this, wxID_ANY, "500",
+        wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxSP_WRAP, 1, 65535, 500);
+
+    wxStaticText* timeSt = new wxStaticText(this, 0, "Time Polling:");
+    wxSpinCtrl* timeSpint = new wxSpinCtrl(this, wxID_ANY, "100",
+        wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxSP_WRAP, 1, 65535, 100);
+
+    devSpin->Bind(wxEVT_SPINCTRL, &HostDlg::OnDevSpin, this);
+    devSpin->Bind(wxEVT_TEXT, &HostDlg::OnDevSpinText, this);
+    timeSpint->Bind(wxEVT_SPINCTRL, &HostDlg::OnTimeSpin, this);
+    timeSpint->Bind(wxEVT_TEXT, &HostDlg::OnTimeSpinText, this);
+
+    wxSizer* const sizerSpns = new wxBoxSizer(wxHORIZONTAL);
+    sizerSpns->Add(devSt, flags);
+    sizerSpns->Add(devSpin, flags);
+    sizerSpns->Add(timeSt, flags);
+    sizerSpns->Add(timeSpint, flags);
+
     wxSizer* const sizerBtns = new wxBoxSizer(wxHORIZONTAL);
     sizerBtns->Add(new wxButton(this, wxID_OK, "&OK"), flags);
 
+    sizerTop->Add(sizerSpns, flags.Align(wxALIGN_CENTER_HORIZONTAL));
     sizerTop->Add(sizerBtns, flags.Align(wxALIGN_CENTER_HORIZONTAL));
     SetSizerAndFit(sizerTop);
     Centre();
@@ -99,7 +120,7 @@ HostDlg::HostDlg(const wxString& title)
     //timer for device enumeration
     m_dev_enum = new wxTimer(this);
     Bind(wxEVT_TIMER, &HostDlg::OnDevEnum, this);
-    m_dev_enum->Start(500);    //check every 0.5 seconds
+    m_dev_enum->Start(m_dev_int);    //check every 0.5 seconds
 }
 
 HostDlg::~HostDlg() {
@@ -176,6 +197,30 @@ void HostDlg::OnDevEnum(wxTimerEvent& event)
     }
 }
 
+void HostDlg::OnDevSpin(wxSpinEvent& event)
+{
+    m_dev_int = event.GetValue();
+    m_dev_enum->Start(m_dev_int);
+}
+
+void HostDlg::OnDevSpinText(wxCommandEvent& event)
+{
+    wxString str = event.GetString();
+    m_dev_int    = std::atoi(str.ToStdString().c_str());
+    m_dev_enum->Start(m_dev_int);
+}
+
+void HostDlg::OnTimeSpin(wxSpinEvent& event)
+{
+    m_time_int = event.GetValue();
+}
+
+void HostDlg::OnTimeSpinText(wxCommandEvent& event)
+{
+    wxString str = event.GetString();
+    m_time_int   = std::atoi(str.ToStdString().c_str());
+}
+
 void HostDlg::query_mode(Keyboard* kb) {
     // lock
     std::unique_lock<std::mutex> lock(m_mutex);
@@ -185,7 +230,7 @@ void HostDlg::query_mode(Keyboard* kb) {
 
     std::wstring str;
     int          err;
-    query[0] = ID_QUERY_MODE;
+    query[0] = 0xFF;
     query[1] = ID_QUERY_MODE;
     err = hid_write(kb->hd, query, sizeof(query));
     if (err == -1) str = hid_error(kb->hd);
@@ -193,8 +238,8 @@ void HostDlg::query_mode(Keyboard* kb) {
     // Clear any old data from the buffer
     while (hid_read(kb->hd, resps, sizeof(resps)) > 0)
     {
-        if (resps[0] == ID_REPORT_MODE) {
-            uint8_t mode = resps[1];
+        if (resps[0] == 0xFF && resps[1] == ID_REPORT_MODE) {
+            uint8_t mode = resps[2];
             switch (mode)
             {
                 case KB_STOPW:
@@ -207,10 +252,6 @@ void HostDlg::query_mode(Keyboard* kb) {
         }
         // No-op: just clearing the buffer
     }
-
-    //err = hid_read_timeout(kb->hd, resps, sizeof(resps), 500);
-    //if (err == -1) str = hid_error(kb->hd);
-
 }
 
 void HostDlg::keyboard_loop(Keyboard* kb) {
@@ -228,7 +269,7 @@ void HostDlg::keyboard_loop(Keyboard* kb) {
                 std::tm*    now_tm = std::localtime(&now_c);
 
                 uint8_t buffer[32] = {0};
-                buffer[0]          = ID_UPDATE_TIME;
+                buffer[0]          = 0xFF;
                 buffer[1]          = ID_UPDATE_TIME;
                 buffer[2]          = static_cast<uint8_t>(now_tm->tm_hour / 10) + '0';
                 buffer[3]          = static_cast<uint8_t>(now_tm->tm_hour % 10) + '0';
@@ -244,7 +285,7 @@ void HostDlg::keyboard_loop(Keyboard* kb) {
                 int  seconds     = sw_duration % 60;
 
                 uint8_t buffer[32] = {0};
-                buffer[0]          = ID_UPDATE_TIME;
+                buffer[0]          = 0xFF;
                 buffer[1]          = ID_UPDATE_TIME;
                 buffer[2]          = static_cast<uint8_t>(minutes / 10) + '0';
                 buffer[3]          = static_cast<uint8_t>(minutes % 10) + '0';
@@ -256,7 +297,7 @@ void HostDlg::keyboard_loop(Keyboard* kb) {
         }
 
         //
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(m_time_int));
     }
 }
 
