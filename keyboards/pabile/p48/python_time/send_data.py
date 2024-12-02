@@ -47,8 +47,9 @@ try:
 
         # Prepare the data to send (must be 32 bytes)
         data = bytearray(32)
-        data[0] = 0  # Set the command ID
-        data[1:1+len(current_time)] = current_time.encode('utf-8')
+        data[0] = 50  # Set the command ID
+        data[1] = 50
+        data[2:2+len(current_time)] = current_time.encode('utf-8')
 
         # Convert bytearray to list of integers
         data_list = bytes(data)
