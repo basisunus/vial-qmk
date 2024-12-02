@@ -132,7 +132,8 @@ void HostDlg::OnDevEnum(wxTimerEvent& event)
     cur_dev = devs;
     while (cur_dev)
     {
-        if (is_supported(cur_dev->vendor_id, cur_dev->product_id))
+        if (is_supported(cur_dev->vendor_id, cur_dev->product_id,
+            cur_dev->usage_page, cur_dev->usage))
         {
             std::string key = get_key(cur_dev->vendor_id, cur_dev->product_id);
             current_devices[key] = true;
@@ -140,11 +141,9 @@ void HostDlg::OnDevEnum(wxTimerEvent& event)
             if (m_keyboards.find(key) == m_keyboards.end())
             {
                 //open new device
-                hid_device* handle = hid_open(cur_dev->vendor_id, cur_dev->product_id, NULL);
+                hid_device* handle = hid_open_path(cur_dev->path);
                 if (handle)
                 {
-                    // set the device to nonblocking mode
-                    hid_set_nonblocking(handle, 0);
                     Keyboard kb =
                     {
                         cur_dev->vendor_id,
@@ -178,6 +177,9 @@ void HostDlg::OnDevEnum(wxTimerEvent& event)
 }
 
 void HostDlg::query_mode(Keyboard* kb) {
+    // lock
+    std::unique_lock<std::mutex> lock(m_mutex);
+
     uint8_t query[32] = {0}; // command to query mode
     uint8_t resps[32] = {0};
 
@@ -187,20 +189,28 @@ void HostDlg::query_mode(Keyboard* kb) {
     query[1] = ID_QUERY_MODE;
     err = hid_write(kb->hd, query, sizeof(query));
     if (err == -1) str = hid_error(kb->hd);
-    err = hid_read_timeout(kb->hd, resps, sizeof(resps), -1);
-    if (err == -1) str = hid_error(kb->hd);
 
-    if (resps[0] == ID_REPORT_MODE) {
-        uint8_t mode = resps[1];
-        switch (mode)
-        {
-            case KB_STOPW:
-                if (kb->mode != KB_STOPW)
-                    m_sw_start = std::chrono::steady_clock::now();
-                break;
+    // Clear any old data from the buffer
+    while (hid_read(kb->hd, resps, sizeof(resps)) > 0)
+    {
+        if (resps[0] == ID_REPORT_MODE) {
+            uint8_t mode = resps[1];
+            switch (mode)
+            {
+                case KB_STOPW:
+                    if (kb->mode != KB_STOPW)
+                        m_sw_start = std::chrono::steady_clock::now();
+                    break;
+            }
+            kb->mode = (kb_mode)(mode);
+            break;
         }
-        kb->mode = (kb_mode)(mode);
+        // No-op: just clearing the buffer
     }
+
+    //err = hid_read_timeout(kb->hd, resps, sizeof(resps), 500);
+    //if (err == -1) str = hid_error(kb->hd);
+
 }
 
 void HostDlg::keyboard_loop(Keyboard* kb) {

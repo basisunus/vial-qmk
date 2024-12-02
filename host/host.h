@@ -6,6 +6,7 @@
 #include <map>
 #include <chrono>
 #include <thread>
+#include <mutex>
 #include <hidapi.h>
 
 enum kb_mode
@@ -31,6 +32,9 @@ struct Keyboard
     hid_device *hd;
     kb_mode mode;
 };
+
+#define USAGE_PAGE 0xFF60
+#define USAGE 0x61
 
 static std::vector<Keyboard> supported_keyboards = {
     {0x8065, 0x8048, 0, KB_NONE}, // pabile p48
@@ -76,6 +80,7 @@ private:
     wxTimer *m_dev_enum;
     std::map<std::string, Keyboard> m_keyboards;//connected keyboards
     std::chrono::time_point<std::chrono::steady_clock> m_sw_start;//start time by a stopwatch
+    std::mutex m_mutex;
 
 private:
     std::string get_key(uint16_t vendor_id, uint16_t product_id)
@@ -94,12 +99,15 @@ private:
         m_keyboards.clear();
     }
 
-    bool is_supported(uint16_t vendor_id, uint16_t product_id)
+    bool is_supported(uint16_t vendor_id, uint16_t product_id,
+        uint16_t usage_page, uint16_t usage)
     {
         for (const auto &kb : supported_keyboards)
         {
             if (kb.vendor_id == vendor_id &&
-                kb.product_id == product_id)
+                kb.product_id == product_id &&
+                USAGE_PAGE == usage_page &&
+                USAGE == usage)
             {
                 return true;
             }
