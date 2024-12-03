@@ -66,7 +66,10 @@ wxEND_EVENT_TABLE()
 
 HostDlg::HostDlg(const wxString& title)
 : wxDialog(NULL, wxID_ANY, title),
-m_dev_int(500), m_time_int(100) {
+m_dev_int(500),
+m_time_int(100),
+m_run_hid(true)
+{
     wxSizer* const sizerTop = new wxBoxSizer(wxVERTICAL);
 
     wxSizerFlags flags;
@@ -94,6 +97,9 @@ m_dev_int(500), m_time_int(100) {
     sizerSpns->Add(timeSpint, flags);
 
     wxSizer* const sizerBtns = new wxBoxSizer(wxHORIZONTAL);
+    m_start_stop_btn = new wxButton(this, wxID_ANY, "&Stop");
+    m_start_stop_btn->Bind(wxEVT_BUTTON, &HostDlg::OnStartStopBtn, this);
+    sizerBtns->Add(m_start_stop_btn, flags);
     sizerBtns->Add(new wxButton(this, wxID_OK, "&OK"), flags);
 
     sizerTop->Add(sizerSpns, flags.Align(wxALIGN_CENTER_HORIZONTAL));
@@ -101,7 +107,7 @@ m_dev_int(500), m_time_int(100) {
     SetSizerAndFit(sizerTop);
     Centre();
 
-    m_taskBarIcon = new HostTrayIcon();
+    m_taskBarIcon = new HostTrayIcon(this);
 
     // we should be able to show up to 128 characters on Windows
     wxIcon icon;
@@ -146,6 +152,9 @@ void HostDlg::OnCloseWindow(wxCloseEvent& WXUNUSED(event)) {
 
 void HostDlg::OnDevEnum(wxTimerEvent& event)
 {
+    if (!m_run_hid)
+        return;
+
     std::map<std::string, bool> current_devices;
     struct hid_device_info *devs, *cur_dev;
 
@@ -197,8 +206,16 @@ void HostDlg::OnDevEnum(wxTimerEvent& event)
     }
 }
 
-void HostDlg::OnDevSpin(wxSpinEvent& event)
+void HostDlg::OnStartStopBtn(wxCommandEvent& event)
 {
+    ToggleRunHID();
+    if (m_run_hid)
+        m_start_stop_btn->SetLabel("&Stop");
+    else
+        m_start_stop_btn->SetLabel("&Start");
+}
+
+void HostDlg::OnDevSpin(wxSpinEvent& event) {
     m_dev_int = event.GetValue();
     m_dev_enum->Start(m_dev_int);
 }
@@ -258,6 +275,12 @@ void HostDlg::keyboard_loop(Keyboard* kb) {
     if (!kb) return;
     while (true) {
         if (kb->mode == KB_NONE) return;
+
+        if (!m_run_hid)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(m_time_int));
+            continue;
+        }
 
         // update mode
         query_mode(kb);
@@ -320,13 +343,25 @@ void HostDlg::keyboard_loop(Keyboard* kb) {
 // HostTrayIcon implementation
 // ----------------------------------------------------------------------------
 
-enum { PU_SETTINGS = 10001, PU_EXIT };
+enum
+{
+    PU_START_STOP = 10001,
+    PU_SETTINGS,
+    PU_EXIT
+};
 
 wxBEGIN_EVENT_TABLE(HostTrayIcon, wxTaskBarIcon)
+EVT_MENU(PU_START_STOP, HostTrayIcon::OnStartStop)
 EVT_MENU(PU_SETTINGS, HostTrayIcon::OnMenuSettings)
 EVT_MENU(PU_EXIT, HostTrayIcon::OnMenuExit)
 EVT_TASKBAR_LEFT_DCLICK(HostTrayIcon::OnLeftButtonDClick)
 wxEND_EVENT_TABLE()
+
+void HostTrayIcon::OnStartStop(wxCommandEvent& event)
+{
+    if (m_host_dlg)
+        m_host_dlg->ToggleRunHID();
+}
 
 void HostTrayIcon::OnMenuSettings(wxCommandEvent&) {
     gs_dialog->Show(true);
@@ -339,6 +374,13 @@ void HostTrayIcon::OnMenuExit(wxCommandEvent&) {
 // Overridables
 wxMenu* HostTrayIcon::CreatePopupMenu() {
     wxMenu* menu = new wxMenu;
+    if (m_host_dlg)
+    {
+        if (m_host_dlg->GetRunHID())
+            menu->Append(PU_START_STOP, "&Stop");
+        else
+            menu->Append(PU_START_STOP, "&Start");
+    }
     menu->Append(PU_SETTINGS, "&Settings");
     menu->AppendSeparator();
     menu->Append(PU_EXIT, "E&xit");

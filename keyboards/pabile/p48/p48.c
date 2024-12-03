@@ -423,6 +423,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             case MM4://close
                 SEND_STRING(SS_TAP(X_BTN1) SS_DELAY(100) SS_LALT(SS_TAP(X_F4)));
                 break;
+            case MM9://empty emails in outlook
+                SEND_STRING(SS_TAP(X_BTN2) SS_DELAY(100) SS_TAP(X_Y));
+                break;
             case MM10://step over
                 SEND_STRING(SS_TAP(X_F10));
                 break;
@@ -432,7 +435,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             case MM12://step out
                 SEND_STRING(SS_LSFT(SS_TAP(X_F11)));
                 break;
-            case MM20://run
+            case MM20://close tab
                 SEND_STRING(SS_LCTL(SS_TAP(X_W)));
                 break;
             case MM21://select and look up

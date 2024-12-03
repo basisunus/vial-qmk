@@ -42,23 +42,24 @@ static std::vector<Keyboard> supported_keyboards = {
     {0x594D, 0x0075, 0, KB_NONE}  // ymdk id75
 };
 
+class HostDlg;
 class HostTrayIcon : public wxTaskBarIcon
 {
 public:
-#if defined(__WXOSX__) && wxOSX_USE_COCOA
-    HostTrayIcon(wxTaskBarIconType iconType = wxTBI_DEFAULT_TYPE)
-    :   wxTaskBarIcon(iconType)
-#else
-    HostTrayIcon()
-#endif
+    HostTrayIcon(HostDlg* dlg) :
+        m_host_dlg(dlg)
     {}
 
     void OnLeftButtonDClick(wxTaskBarIconEvent&);
+    void OnStartStop(wxCommandEvent &event);
     void OnMenuSettings(wxCommandEvent&);
     void OnMenuExit(wxCommandEvent&);
     virtual wxMenu *CreatePopupMenu() wxOVERRIDE;
 
     wxDECLARE_EVENT_TABLE();
+
+private:
+    HostDlg *m_host_dlg;
 };
 
 
@@ -77,6 +78,19 @@ public:
     HostDlg(const wxString& title);
     virtual ~HostDlg();
 
+    bool GetRunHID()
+    {
+        return m_run_hid;
+    }
+    void SetRunHID(bool bval)
+    {
+        m_run_hid = bval;
+    }
+    void ToggleRunHID()
+    {
+        m_run_hid = !m_run_hid;
+    }
+
 private:
     wxTimer *m_dev_enum;
     std::map<std::string, Keyboard> m_keyboards;//connected keyboards
@@ -85,6 +99,9 @@ private:
     //polling intervals
     uint16_t m_dev_int;
     uint16_t m_time_int;
+    //hid status
+    bool m_run_hid;
+    wxButton *m_start_stop_btn;
 
 private:
     std::string get_key(uint16_t vendor_id, uint16_t product_id)
@@ -128,6 +145,7 @@ protected:
     void OnCloseWindow(wxCloseEvent& event);
     void OnDevEnum(wxTimerEvent &event);
 
+    void OnStartStopBtn(wxCommandEvent &event);
     void OnDevSpin(wxSpinEvent &event);
     void OnDevSpinText(wxCommandEvent &event);
     void OnTimeSpin(wxSpinEvent &event);
