@@ -14,6 +14,7 @@ enum kb_mode
     KB_NONE = 0,
     KB_LAYER,
     KB_TIME,
+    KB_TSEC,
     KB_STOPW
 };
 

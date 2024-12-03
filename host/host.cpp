@@ -278,6 +278,21 @@ void HostDlg::keyboard_loop(Keyboard* kb) {
 
                 hid_write(kb->hd, buffer, sizeof(buffer));
             } break;
+            case KB_TSEC: {
+                auto        now    = std::chrono::system_clock::now();
+                std::time_t now_c  = std::chrono::system_clock::to_time_t(now);
+                std::tm*    now_tm = std::localtime(&now_c);
+
+                uint8_t buffer[32] = {0};
+                buffer[0]          = 0xFF;
+                buffer[1]          = ID_UPDATE_TIME;
+                buffer[2]          = static_cast<uint8_t>(now_tm->tm_min / 10) + '0';
+                buffer[3]          = static_cast<uint8_t>(now_tm->tm_min % 10) + '0';
+                buffer[4]          = static_cast<uint8_t>(now_tm->tm_sec / 10) + '0';
+                buffer[5]          = static_cast<uint8_t>(now_tm->tm_sec % 10) + '0';
+
+                hid_write(kb->hd, buffer, sizeof(buffer));
+            } break;
             case KB_STOPW: {
                 auto sw_cur = std::chrono::steady_clock::now();
                 auto sw_duration = std::chrono::duration_cast<std::chrono::seconds>(sw_cur - m_sw_start).count();
