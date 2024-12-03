@@ -58,7 +58,11 @@ enum disp_modes {
 };
 
 // keycodes for display modes
-enum disp_keycodes { DK_LAYER = SAFE_RANGE, DK_TIME, DK_TSEC, DK_STOPW };
+enum disp_keycodes {
+    DK_LAYER = SAFE_RANGE,
+    DK_TIME,
+    DK_TSEC,
+    DK_STOPW };
 
 // command id for hid
 enum commands {
