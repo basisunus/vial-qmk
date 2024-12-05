@@ -140,6 +140,9 @@ private:
 
     void keyboard_loop(Keyboard *kb);
 
+    void read_settings();
+    void save_settings();
+
 protected:
     void OnOK(wxCommandEvent& event);
     void OnCloseWindow(wxCloseEvent& event);

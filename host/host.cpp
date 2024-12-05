@@ -1,6 +1,9 @@
 #include "wx/artprov.h"
 #include "wx/taskbar.h"
 #include "wx/spinctrl.h"
+#include <wx/stdpaths.h>
+#include <wx/wfstream.h>
+#include <wx/fileconf.h>
 #include "host.h"
 #include "images.h"
 
@@ -66,10 +69,13 @@ wxEND_EVENT_TABLE()
 
 HostDlg::HostDlg(const wxString& title)
 : wxDialog(NULL, wxID_ANY, title),
-m_dev_int(500),
+m_dev_int(5000),
 m_time_int(100),
 m_run_hid(true)
 {
+    //read from config file
+    read_settings();
+
     wxSizer* const sizerTop = new wxBoxSizer(wxVERTICAL);
 
     wxSizerFlags flags;
@@ -78,12 +84,12 @@ m_run_hid(true)
     sizerTop->AddStretchSpacer()->SetMinSize(200, 50);
 
     wxStaticText* devSt = new wxStaticText(this, 0, "Device Polling:");
-    wxSpinCtrl* devSpin = new wxSpinCtrl(this, wxID_ANY, "500",
-        wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxSP_WRAP, 1, 65535, 500);
+    wxSpinCtrl*   devSpin = new wxSpinCtrl(this, wxID_ANY, wxString::Format("%d", m_dev_int),
+        wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxSP_WRAP, 1, 65535, m_dev_int);
 
     wxStaticText* timeSt = new wxStaticText(this, 0, "Time Polling:");
-    wxSpinCtrl* timeSpint = new wxSpinCtrl(this, wxID_ANY, "100",
-        wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxSP_WRAP, 1, 65535, 100);
+    wxSpinCtrl*   timeSpint = new wxSpinCtrl(this, wxID_ANY, wxString::Format("%d", m_time_int),
+        wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxSP_WRAP, 1, 65535, m_time_int);
 
     devSpin->Bind(wxEVT_SPINCTRL, &HostDlg::OnDevSpin, this);
     devSpin->Bind(wxEVT_TEXT, &HostDlg::OnDevSpinText, this);
@@ -97,7 +103,7 @@ m_run_hid(true)
     sizerSpns->Add(timeSpint, flags);
 
     wxSizer* const sizerBtns = new wxBoxSizer(wxHORIZONTAL);
-    m_start_stop_btn = new wxButton(this, wxID_ANY, "&Stop");
+    m_start_stop_btn = new wxButton(this, wxID_ANY, m_run_hid ? "&Stop" : "&Start");
     m_start_stop_btn->Bind(wxEVT_BUTTON, &HostDlg::OnStartStopBtn, this);
     sizerBtns->Add(m_start_stop_btn, flags);
     sizerBtns->Add(new wxButton(this, wxID_OK, "&OK"), flags);
@@ -130,6 +136,8 @@ m_run_hid(true)
 }
 
 HostDlg::~HostDlg() {
+    save_settings();
+
     delete m_taskBarIcon;
 
     //hidapi
@@ -337,6 +345,54 @@ void HostDlg::keyboard_loop(Keyboard* kb) {
         //
         std::this_thread::sleep_for(std::chrono::milliseconds(m_time_int));
     }
+}
+
+void HostDlg::read_settings()
+{
+	wxString expath = wxStandardPaths::Get().GetExecutablePath();
+	expath = wxPathOnly(expath);
+	wxString dft = expath + "\\" + "config.ini";
+	wxFileInputStream is(dft);
+	if (!is.IsOk())
+		return;
+	wxFileConfig fconfig(is);
+
+    int ival;
+    fconfig.Read("dev int", &ival, 5000);
+    m_dev_int = ival;
+
+    fconfig.Read("time int", &ival, 100);
+    m_time_int = ival;
+
+    bool bval;
+    fconfig.Read("run hid", &bval, true);
+    m_run_hid = bval;
+}
+
+void HostDlg::save_settings()
+{
+	wxString app_name = "Host " +
+		wxString::Format("%d.%.1f", 1, float(0));
+	wxString vendor_name = "Host";
+	wxString local_name = "config.ini";
+	wxFileConfig fconfig(app_name, vendor_name, local_name, "",
+		wxCONFIG_USE_LOCAL_FILE);
+
+    int ival;
+    ival = m_dev_int;
+    fconfig.Write("dev int", ival);
+
+    ival = m_time_int;
+    fconfig.Write("time int", ival);
+
+    fconfig.Write("run hid", m_run_hid);
+
+	wxString expath = wxStandardPaths::Get().GetExecutablePath();
+	expath = wxPathOnly(expath);
+	wxString dft = expath + "\\" + "config.ini";
+	wxString str = "\x5c\x5c\x3f\x5c" + dft;
+	wxFileOutputStream os(str);
+	fconfig.Save(os);
 }
 
 // ----------------------------------------------------------------------------
